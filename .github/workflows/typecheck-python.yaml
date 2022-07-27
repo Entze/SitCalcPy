@@ -1,8 +1,8 @@
-name: "Unittests"
+name: "Typecheck"
 on: [push]
 jobs:
-  unittests:
-    name: "Unittests"
+  mypy:
+    name: "mypy"
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ "ubuntu-latest", "macos-latest"]
+        os: [ "ubuntu-latest" ]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/cache@v2
@@ -24,4 +24,4 @@ jobs:
           channel-priority: strict
           environment-file: environment.yml
       - run: conda info
-      - run: python3 -m unittest discover test
+      - run: mypy -p scpy

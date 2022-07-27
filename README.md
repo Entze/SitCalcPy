@@ -1,5 +1,6 @@
 # SitCalcPy
 
+[![Unittests](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml) 
 SitCalcPy is a Python library for doing stuff in Situation Calculus
 
 ## Installation
