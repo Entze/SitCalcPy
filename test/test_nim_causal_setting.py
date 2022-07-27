@@ -5,7 +5,9 @@ from scpy.causal_setting.game_causal_setting import GameCausalSetting
 from scpy.causal_setting.nim_causal_setting import NimCausalSetting
 from scpy.function import Function
 from scpy.literal import Literal
+from scpy.path import Path
 from scpy.situation import Situation
+
 
 class TestConstructor(unittest.TestCase):
 
@@ -96,8 +98,8 @@ class TestPoss(unittest.TestCase):
         expected = False
         self.assertEqual(expected, actual)
 
-class TestDo(unittest.TestCase):
 
+class TestDo(unittest.TestCase):
 
     def test_simple(self):
         t = NimCausalSetting()
@@ -118,7 +120,6 @@ class TestDo(unittest.TestCase):
         expected = s0
         actual = s1.previous_situation
         self.assertEqual(expected, actual)
-
 
     def test_full(self):
         t = NimCausalSetting()
@@ -144,4 +145,32 @@ class TestDo(unittest.TestCase):
         self.assertEqual(expected, actual)
         expected = s2
         actual = s3.previous_situation
+        self.assertEqual(expected, actual)
+
+
+class TestAllPossActions(unittest.TestCase):
+
+    def test_simple(self):
+        t = NimCausalSetting()
+        state = frozenset((Literal(NimCausalSetting.stones(7)), Literal(GameCausalSetting.control(0))))
+        s0 = Situation(state)
+        actual = set(t.all_poss_actions(s0))
+        expected = {
+            t.tick(0, NimCausalSetting.take(1)),
+            t.tick(0, NimCausalSetting.take(2)),
+            t.tick(0, NimCausalSetting.take(3)),
+        }
+        self.assertSetEqual(expected, actual)
+
+class TestWithPaths(unittest.TestCase):
+
+    def test_simple(self):
+        t = NimCausalSetting()
+        state = frozenset((Literal(NimCausalSetting.stones(7)), Literal(GameCausalSetting.control(0))))
+        s0 = Situation(state)
+        p = Path(s0)
+        p.expand(t)
+        p.expand(t)
+        expected = 3
+        actual = len(p.traces)
         self.assertEqual(expected, actual)

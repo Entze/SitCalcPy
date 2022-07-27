@@ -46,7 +46,7 @@ class NimCausalSetting(GameCausalSetting):
             return not in_control
         return in_control and valid_move
 
-    def _do_state(self, action: Action, state: State) -> State:
+    def do_state(self, action: Action, state: State) -> State:
         state_ = set(state)
         take = sum(argument.arguments[0] for argument in action.arguments if
                    argument != GameCausalSetting.noop() and argument.arguments)
