@@ -1,6 +1,6 @@
 # SitCalcPy
 
-[![Unittests](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml)[![Typecheck](https://github.com/Entze/SitCalcPy/actions/workflows/typecheck-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/typecheck-python.yaml)[![Lint](https://github.com/Entze/SitCalcPy/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/lint-python.yaml)
+[![Unittests](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/unittest-python.yaml) [![Typecheck](https://github.com/Entze/SitCalcPy/actions/workflows/typecheck-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/typecheck-python.yaml) [![Lint](https://github.com/Entze/SitCalcPy/actions/workflows/lint-python.yaml/badge.svg)](https://github.com/Entze/SitCalcPy/actions/workflows/lint-python.yaml)
 
 SitCalcPy is a Python library for doing stuff in Situation Calculus
 
