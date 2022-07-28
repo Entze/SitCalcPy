@@ -2,7 +2,7 @@
     TODO: Write docstring for module
 """
 
-from typing import Sequence
+from typing import Sequence, Union, TypeAlias
 
 from pydantic import Field
 from pydantic.dataclasses import dataclass
@@ -16,4 +16,10 @@ class Predicate:
     TODO: Write docstring for class
     """
     functor: str = Field(default="")
-    arguments: Sequence[Function | int] = Field(default_factory=tuple)
+    arguments: Sequence[Union[Function, int]] = Field(default_factory=tuple)
+
+    def __str__(self):
+        if self.arguments:
+            return "{}({})".format(self.functor, ','.join(str(argument) for argument in  self.arguments))
+        else:
+            return self.functor

@@ -6,6 +6,7 @@ from pydantic.dataclasses import dataclass
 
 from scpy.formula.state_formula.state_formula import StateFormula
 from scpy.literal import Literal
+from scpy.predicate import Predicate
 from scpy.state import State
 
 
@@ -14,11 +15,14 @@ class PredicateStateFormula(StateFormula):
     """
     TODO: Write docstring for class
     """
-    literal: Literal = Field(default_factory=Literal)
+    predicate: Predicate = Field(default_factory=Predicate)
+
+    def __str__(self):
+        return str(self.predicate)
 
     def evaluate_state(self, state: State) -> bool:
-        if self.literal in state:
-            return True
-        if -self.literal in state:
+        lit = Literal(self.predicate)
+        if -lit in state:
             return False
-        return not self.literal.sign
+        return lit in state
+

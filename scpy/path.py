@@ -17,6 +17,11 @@ class Path:
     def __len__(self):
         return self.len
 
+    def __str__(self):
+        if self.len == 0:
+            return "{}"
+        return repr(self)
+
     def expand(self, causal_setting: CausalSetting):
         if not self.traces:
             initial_trace = Trace((self.initial_situation.state,))

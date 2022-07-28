@@ -17,3 +17,9 @@ class Function:
     """
     symbol: str = Field(default="")
     arguments: Sequence[Union[_Function, int]] = Field(default_factory=tuple)
+
+    def __str__(self):
+        if self.arguments:
+            return "{}({})".format(self.symbol, ','.join(str(argument) for argument in self.arguments))
+        else:
+            return self.symbol

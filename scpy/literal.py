@@ -18,3 +18,9 @@ class Literal:
 
     def __neg__(self):
         return Literal(self.predicate, not self.sign)
+
+    def __str__(self):
+        if self.sign:
+            return str(self.predicate)
+        else:
+            return "¬{}".format(self.predicate)

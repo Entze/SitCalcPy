@@ -26,6 +26,14 @@ class Trace:
         self.invariant()
         return len(self.states)
 
+    def __str__(self):
+        self.invariant()
+        s = "{}{}{}".format('{', ','.join(str(literal) for literal in self.first_state), '}')
+        for i,a in enumerate(self.actions):
+            s += " {} ".format(a)
+            s += "{}{}{}".format('{', ','.join(str(literal) for literal in self.states[i+1]), '}')
+        return s
+
     @property
     def first_state(self) -> State:
         self.invariant()

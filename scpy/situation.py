@@ -23,3 +23,9 @@ class Situation:
     previous_action: Optional[Action] = Field(default=None)
     previous_situation: Optional[_Situation] = Field(default=None, repr=False)
     knowledge_relation: Mapping[Agent, FrozenSet[_Situation]] = Field(default_factory=frozendict)
+
+    def __str__(self):
+        if self.previous_action is not None:
+            return "{}->{}{}{}".format(self.previous_action, '{', ','.join(str(literal) for literal in self.state), '}')
+        else:
+            return "{}{}{}".format('{', ','.join(str(literal) for literal in self.state), '}')
