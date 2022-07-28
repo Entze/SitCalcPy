@@ -51,18 +51,19 @@ class CausalSetting:
         )
         return situation_
 
-    def _poss_state(self, action: Action, state: State) -> bool:
+    def poss_state(self, action: Action, state: State) -> bool:
         raise NotImplementedError
 
     def _poss(self, action: Action, situation: Situation) -> bool:
-        return self._poss_state(action, situation.state)
+        return self.poss_state(action, situation.state)
 
     def poss(self, action: Action, situation: Situation) -> bool:
         return action in self.actions and self._poss(action, situation)
 
     def all_actions_state(self,
                           state: Optional[State] = None,
-                          condition: Optional[Callable[[_CausalSetting, Optional[State], Action], bool]] = None):
+                          condition: Optional[Callable[[_CausalSetting, Optional[State], Action], bool]] = None) -> \
+    Iterator[Action]:
         if condition is None:
             def condition_default(cs: CausalSetting, s: State, a: Action) -> bool:
                 return True
@@ -72,10 +73,11 @@ class CausalSetting:
 
     def all_poss_actions_state(self,
                                state: Optional[State] = None,
-                               condition: Optional[Callable[[_CausalSetting, Optional[State], Action], bool]] = None):
+                               condition: Optional[Callable[[_CausalSetting, Optional[State], Action], bool]] = None) -> \
+    Iterator[Action]:
         if condition is None:
             def condition_default(cs: CausalSetting, s: State, a: Action) -> bool:
-                return cs._poss_state(a, s)
+                return cs.poss_state(a, s)
 
             condition = condition_default
         return filter(functools.partial(condition, self, state), self.actions)

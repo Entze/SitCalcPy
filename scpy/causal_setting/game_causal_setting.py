@@ -18,7 +18,7 @@ class GameCausalSetting(CausalSetting):
     def _legal_move_situation(self, agent: Agent, move: Function, situation: Situation) -> bool:
         return self._legal_move_state(agent, move, situation.state)
 
-    def _poss_state(self, action: Action, state: State) -> bool:
+    def poss_state(self, action: Action, state: State) -> bool:
         if action.symbol != 'tick' and len(action.arguments) != len(self.agents):
             return False
         return all(self._legal_move_state(agent, move, state) for agent, move in enumerate(action.arguments))

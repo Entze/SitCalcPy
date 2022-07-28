@@ -28,7 +28,7 @@ class SimpleCausalSetting(CausalSetting):
             return state
         return frozenset(state_)
 
-    def _poss_state(self, action: Action, state: State) -> bool:
+    def poss_state(self, action: Action, state: State) -> bool:
         if action.symbol in ('add', 'remove'):
             elem_raw = action.arguments[0]
             elem = Predicate(elem_raw.symbol, elem_raw.arguments)
