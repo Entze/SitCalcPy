@@ -10,9 +10,9 @@ from scpy.trace import Trace
 
 @dataclass
 class PathWithStrategy(Path):
-    strategy: Strategy = Field(default_factory=ChoiceStrategy)
+    strategy: Strategy = Field(default_factory=ChoiceStrategy)  # type: ignore
 
-    def expand(self, causal_setting: CausalSetting):
+    def expand(self, causal_setting: CausalSetting) -> None:
         if not self.traces:
             initial_trace = Trace((self.initial_situation.state,))
             self.traces.add(initial_trace)

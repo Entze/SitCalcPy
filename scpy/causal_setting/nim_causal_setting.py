@@ -1,4 +1,4 @@
-from typing import FrozenSet
+from typing import FrozenSet, Optional
 
 from pydantic import Field
 from pydantic.dataclasses import dataclass
@@ -39,8 +39,10 @@ class NimCausalSetting(GameCausalSetting):
             if literal.sign and literal.predicate.functor == 'control' and literal.predicate.arguments[0] == agent:
                 in_control = True
             if literal.sign and move.symbol == 'take' and literal.predicate.functor == 'stones':
-                stones = literal.predicate.arguments[0]
-                take = move.arguments[0]
+                assert isinstance(literal.predicate.arguments[0], int)
+                stones:int = literal.predicate.arguments[0]
+                assert isinstance(move.arguments[0], int)
+                take: int = move.arguments[0]
                 valid_move = 1 <= take <= 3 and take <= stones
         if move == GameCausalSetting.noop():
             return not in_control
@@ -49,19 +51,26 @@ class NimCausalSetting(GameCausalSetting):
     def do_state(self, action: Action, state: State) -> State:
         state_ = set(state)
         take = sum(argument.arguments[0] for argument in action.arguments if
-                   argument != GameCausalSetting.noop() and argument.arguments)
-        current_player = None
+                   isinstance(argument, Action) and
+                   argument != GameCausalSetting.noop() and argument.arguments and isinstance(argument.arguments[0],
+                                                                                              int))
+        assert isinstance(take, int)
+        current_player: Optional[Agent] = None
         for literal in state:
             if literal.sign and literal.predicate.functor == 'control':
                 state_.remove(literal)
                 state_.add(-literal)
-                current_player = literal.predicate.arguments[0]
+                control = literal.predicate.arguments[0]
+                assert isinstance(control, int)
+                current_player = control
             if literal.sign and literal.predicate.functor == 'stones':
                 state_.remove(literal)
                 state_.add(-literal)
                 stones = literal.predicate.arguments[0]
+                assert isinstance(stones, int)
                 state_.add(Literal(NimCausalSetting.stones(stones - take)))
         assert current_player is not None
+        assert isinstance(current_player, Agent)
         next_player = Literal(Predicate('control', (self.next_player(current_player),)))
         state_.add(next_player)
         if -next_player in state_:

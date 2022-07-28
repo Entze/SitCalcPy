@@ -29,7 +29,11 @@ class PathFormula(Formula):
         return self.evaluate_situation(Situation(state))
 
     def evaluate_situation(self, situation: Situation) -> bool:
-        return self.evaluate_path(Path(situation))
+        res = self.evaluate_path(Path(situation))
+        if res == 'Inconclusive':
+            return False
+        assert isinstance(res, bool)
+        return res
 
     def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError

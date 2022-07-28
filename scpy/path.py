@@ -14,15 +14,15 @@ class Path:
     traces: Set[Trace] = Field(default_factory=set)
     len: int = Field(default=0)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return self.len
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.len == 0:
             return "{}"
         return repr(self)
 
-    def expand(self, causal_setting: CausalSetting):
+    def expand(self, causal_setting: CausalSetting) -> None:
         if not self.traces:
             initial_trace = Trace((self.initial_situation.state,))
             self.traces.add(initial_trace)

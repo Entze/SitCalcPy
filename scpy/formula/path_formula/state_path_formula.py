@@ -12,7 +12,7 @@ from scpy.trace import Trace
 class StatePathFormula(PathFormula):
     state_formula: StateFormula
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.state_formula)
 
     def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:

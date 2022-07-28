@@ -11,7 +11,7 @@ from scpy.trace import Trace
 class NextPathFormula(PathFormula):
     phi: PathFormula
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "X({})".format(self.phi)
 
     def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:

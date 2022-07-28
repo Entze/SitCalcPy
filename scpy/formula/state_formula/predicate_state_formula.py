@@ -17,7 +17,7 @@ class PredicateStateFormula(StateFormula):
     """
     predicate: Predicate = Field(default_factory=Predicate)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(self.predicate)
 
     def evaluate_state(self, state: State) -> bool:

@@ -2,6 +2,7 @@ from pydantic.dataclasses import dataclass
 
 from scpy.action import Action
 from scpy.causal_setting.causal_setting import CausalSetting
+from scpy.function import Function
 from scpy.literal import Literal
 from scpy.predicate import Predicate
 from scpy.state import State
@@ -12,6 +13,7 @@ class SimpleCausalSetting(CausalSetting):
 
     def do_state(self, action: Action, state: State) -> State:
         elem_raw = action.arguments[0]
+        assert isinstance(elem_raw, Function)
         elem = Predicate(elem_raw.symbol, elem_raw.arguments)
         elem_lit = Literal(elem)
         if action.symbol == 'add':
@@ -31,6 +33,8 @@ class SimpleCausalSetting(CausalSetting):
     def poss_state(self, action: Action, state: State) -> bool:
         if action.symbol in ('add', 'remove'):
             elem_raw = action.arguments[0]
+            if not isinstance(elem_raw, Function):
+                return False
             elem = Predicate(elem_raw.symbol, elem_raw.arguments)
             elem_lit = Literal(elem)
             if action.symbol == 'add':

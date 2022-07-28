@@ -19,14 +19,18 @@ class GameCausalSetting(CausalSetting):
         return self._legal_move_state(agent, move, situation.state)
 
     def poss_state(self, action: Action, state: State) -> bool:
-        if action.symbol != 'tick' and len(action.arguments) != len(self.agents):
+        if action.symbol != 'tick' and len(action.arguments) != len(self.agents) and not all(
+                isinstance(argument, Function) for argument in action.arguments):
             return False
-        return all(self._legal_move_state(agent, move, state) for agent, move in enumerate(action.arguments))
+        return all(self._legal_move_state(agent, move, state) for agent, move in enumerate(action.arguments) if
+                   isinstance(move, Function))
 
     def _poss(self, action: Action, situation: Situation) -> bool:
-        if action.symbol != 'tick' and len(action.arguments) != len(self.agents):
+        if action.symbol != 'tick' and len(action.arguments) != len(self.agents) and not all(
+                isinstance(argument, Function) for argument in action.arguments):
             return False
-        return all(self._legal_move_situation(agent, move, situation) for agent, move in enumerate(action.arguments))
+        return all(self._legal_move_situation(agent, move, situation) for agent, move in enumerate(action.arguments) if
+                   isinstance(move, Function))
 
     def next_player(self, current_player: Agent = 0) -> Agent:
         return (current_player + 1) % len(self.agents)

@@ -6,6 +6,7 @@ from pydantic.dataclasses import dataclass
 
 from scpy.action import Action
 from scpy.causal_setting.causal_setting import CausalSetting
+from scpy.function import Function
 from scpy.state import State
 
 _Trace: TypeAlias = 'Trace'
@@ -16,22 +17,22 @@ class Trace:
     states: Sequence[State] = Field(default_factory=tuple)
     actions: Sequence[Action] = Field(default_factory=tuple)
 
-    def invariant(self):
+    def invariant(self) -> None:
         if len(self.states) - 1 == len(self.actions):
             return
 
         raise RuntimeError("states and actions mismatched")
 
-    def __len__(self):
+    def __len__(self) -> int:
         self.invariant()
         return len(self.states)
 
-    def __str__(self):
+    def __str__(self) -> str:
         self.invariant()
         s = "{}{}{}".format('{', ','.join(str(literal) for literal in self.first_state), '}')
-        for i,a in enumerate(self.actions):
+        for i, a in enumerate(self.actions):
             s += " {} ".format(a)
-            s += "{}{}{}".format('{', ','.join(str(literal) for literal in self.states[i+1]), '}')
+            s += "{}{}{}".format('{', ','.join(str(literal) for literal in self.states[i + 1]), '}')
         return s
 
     @property
@@ -51,7 +52,7 @@ class Trace:
         actions_ = (*self.actions, action)
         return Trace(states_, actions_)
 
-    def slice(self, from_index: Optional[int] = None, to_index: Optional[int] = None):
+    def slice(self, from_index: Optional[int] = None, to_index: Optional[int] = None) -> _Trace:
         self.invariant()
         actions__: List[Optional[Action]] = [None]
         actions__.extend(self.actions)
@@ -60,6 +61,5 @@ class Trace:
         else:
             states_ = self.states[from_index:to_index]
             from_index_ = from_index + 1 if from_index is not None else None
-            actions_ = tuple(filter(lambda e: e is not None, actions__[from_index_:to_index]))
+            actions_: Sequence[Action] = tuple(action for action in actions__[from_index_:to_index] if action is not None)
             return Trace(states_, actions_)
-

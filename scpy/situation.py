@@ -3,7 +3,7 @@
 """
 from typing import Optional, TypeAlias, Mapping, FrozenSet
 
-from frozendict import frozendict
+from frozendict import frozendict  # type: ignore
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -24,7 +24,7 @@ class Situation:
     previous_situation: Optional[_Situation] = Field(default=None, repr=False)
     knowledge_relation: Mapping[Agent, FrozenSet[_Situation]] = Field(default_factory=frozendict)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.previous_action is not None:
             return "{}->{}{}{}".format(self.previous_action, '{', ','.join(str(literal) for literal in self.state), '}')
         else:

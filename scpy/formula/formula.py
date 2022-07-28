@@ -2,9 +2,8 @@
     TODO: Write docstring for module
 """
 import typing
-from typing import Union
+from typing import Union, Literal
 
-from pydantic import validator
 from pydantic.dataclasses import dataclass
 
 from scpy.path import Path
@@ -19,7 +18,7 @@ class Formula:
     TODO: Write docstring for class
     """
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
+    def evaluate(self, e: Union[State, Situation, Path, Trace])  -> Union[bool, Literal['Inconclusive']]:
         if isinstance(e, frozenset):
             return self.evaluate_state(e)
         elif isinstance(e, Situation):
@@ -37,10 +36,10 @@ class Formula:
     def evaluate_situation(self, situation: Situation) -> bool:
         raise NotImplementedError
 
-    def evaluate_path(self, path: Path) -> bool:
+    def evaluate_path(self, path: Path)-> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError
 
-    def evaluate_trace(self, trace: Trace) -> bool:
+    def evaluate_trace(self, trace: Trace)-> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError
 
 

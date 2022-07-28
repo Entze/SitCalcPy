@@ -18,7 +18,7 @@ class Predicate:
     functor: str = Field(default="")
     arguments: Sequence[Union[Function, int]] = Field(default_factory=tuple)
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.arguments:
             return "{}({})".format(self.functor, ','.join(str(argument) for argument in  self.arguments))
         else:

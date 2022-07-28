@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Literal
 
 from pydantic.dataclasses import dataclass
 
@@ -14,7 +14,7 @@ from scpy.trace import Trace
 @dataclass(frozen=True, order=True)
 class TrueFormula(PathFormula, StateFormula):
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "⊤"
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
@@ -36,7 +36,7 @@ class TrueFormula(PathFormula, StateFormula):
 @dataclass(frozen=True, order=True)
 class FalseFormula(PathFormula, StateFormula):
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "⊥"
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
@@ -48,10 +48,10 @@ class FalseFormula(PathFormula, StateFormula):
     def evaluate_situation(self, situation: Situation) -> bool:
         return False
 
-    def evaluate_path(self, path: Path) -> bool:
+    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         return False
 
-    def evaluate_trace(self, trace: Trace) -> bool:
+    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         return False
 
 
@@ -59,10 +59,10 @@ class FalseFormula(PathFormula, StateFormula):
 class NegationFormula(PathFormula, StateFormula):
     formula: Union[Formula, PathFormula, StateFormula]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "¬{}".format(self.formula)
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
+    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         res = self.formula.evaluate(e)
         if res == 'Inconclusive':
             return res
@@ -80,13 +80,13 @@ class NegationFormula(PathFormula, StateFormula):
             return res
         return not res
 
-    def evaluate_path(self, path: Path) -> bool:
+    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         res = self.formula.evaluate_path(path)
         if res == 'Inconclusive':
             return res
         return not res
 
-    def evaluate_trace(self, trace: Trace) -> bool:
+    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         res = self.formula.evaluate_trace(trace)
         if res == 'Inconclusive':
             return res
@@ -98,10 +98,10 @@ class ConjunctionFormula(PathFormula, StateFormula):
     left: Union[Formula, PathFormula, StateFormula]
     right: Union[Formula, PathFormula, StateFormula]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} ∧ {}".format(self.left, self.right)
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
+    def evaluate(self, e: Union[State, Situation, Path, Trace])-> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate(e)
         if left_res == 'Inconclusive' or not left_res:
             return left_res
@@ -128,7 +128,7 @@ class ConjunctionFormula(PathFormula, StateFormula):
             return right_res
         return left_res and right_res
 
-    def evaluate_path(self, path: Path) -> bool:
+    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate_path(path)
         if left_res == 'Inconclusive' or not left_res:
             return left_res
@@ -137,7 +137,7 @@ class ConjunctionFormula(PathFormula, StateFormula):
             return right_res
         return left_res and right_res
 
-    def evaluate_trace(self, trace: Trace) -> bool:
+    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate_trace(trace)
         if left_res == 'Inconclusive' or not left_res:
             return left_res
@@ -151,10 +151,10 @@ class DisjunctionFormula(PathFormula, StateFormula):
     left: Union[Formula, PathFormula, StateFormula]
     right: Union[Formula, PathFormula, StateFormula]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} ∨ {}".format(self.left, self.right)
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> bool:
+    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate(e)
         if left_res == 'Inconclusive' or left_res:
             return left_res
@@ -181,7 +181,7 @@ class DisjunctionFormula(PathFormula, StateFormula):
             return right_res
         return left_res or right_res
 
-    def evaluate_path(self, path: Path) -> bool:
+    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate_path(path)
         if left_res == 'Inconclusive' or left_res:
             return left_res
@@ -190,7 +190,7 @@ class DisjunctionFormula(PathFormula, StateFormula):
             return right_res
         return left_res or right_res
 
-    def evaluate_trace(self, trace: Trace) -> bool:
+    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate_trace(trace)
         if left_res == 'Inconclusive' or left_res:
             return left_res

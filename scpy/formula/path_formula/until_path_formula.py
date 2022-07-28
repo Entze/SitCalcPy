@@ -12,7 +12,7 @@ class UntilPathFormula(PathFormula):
     phi: PathFormula
     psi: PathFormula
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} U {}".format(self.phi, self.psi)
 
     def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
