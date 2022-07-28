@@ -26,10 +26,10 @@ class PathFormula(Formula):
             typing.assert_never(e)
 
     def evaluate_state(self, state: State) -> bool:
-        raise TypeError
+        return self.evaluate_situation(Situation(state))
 
     def evaluate_situation(self, situation: Situation) -> bool:
-        raise TypeError
+        return self.evaluate_path(Path(situation))
 
     def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError

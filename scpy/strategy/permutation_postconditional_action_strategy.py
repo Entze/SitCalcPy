@@ -10,14 +10,11 @@ from scpy.strategy.strategy import Strategy
 
 
 @dataclass
-class PostconditionalActionStrategy(Strategy):
-    action: Action
+class PermutationPostconditionalActionStrategy(Strategy):
     condition: Formula
 
     def all_applicable_actions(self, causal_setting: CausalSetting, state: State) -> Iterator[Action]:
-        if not causal_setting.poss_state(self.action, state):
-            yield from ()
-        else:
-            state_ = causal_setting.do_state(self.action, state)
+        for action in causal_setting.all_poss_actions_state(state):
+            state_ = causal_setting.do_state(action, state)
             if self.condition.evaluate(state_):
-                yield self.action
+                yield action

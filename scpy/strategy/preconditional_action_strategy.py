@@ -17,6 +17,5 @@ class PreconditionalActionStrategy(Strategy):
     def all_applicable_actions(self, causal_setting: CausalSetting, state: State) -> Iterator[Action]:
         if not causal_setting.poss_state(self.action, state):
             yield from ()
-
-        if self.condition.evaluate(state):
-            yield self.action
+        elif self.condition.evaluate(state):
+                yield self.action
