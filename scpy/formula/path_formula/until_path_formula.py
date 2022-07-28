@@ -17,9 +17,9 @@ class UntilPathFormula(PathFormula):
 
     def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         for i in range(len(trace)):
-            if self.psi.evaluate(trace.slice(i)):
+            if self.psi.evaluate(trace.slice(i)) is True:
                 return True
-            if not self.phi.evaluate(trace.slice(i)):
+            if self.phi.evaluate(trace.slice(i)) is False:
                 return False
         return 'Inconclusive'
 

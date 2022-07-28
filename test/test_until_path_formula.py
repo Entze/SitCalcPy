@@ -270,3 +270,29 @@ class TestEvaluatePath(unittest.TestCase):
         expected = True
 
         self.assertEqual(expected, actual)
+
+    def test_inconclusive_phi(self):
+        a = Predicate('a')
+        a_lit = Literal(a)
+        b = Predicate('b')
+        b_lit = Literal(b)
+        cap_phi = PredicateStateFormula(a)
+        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_delta = PredicateStateFormula(b)
+        cap_delta_comp = NegationFormula(PredicateStateFormula(b))
+        phi_ = NextPathFormula(ConjunctionFormula(cap_phi, cap_delta))
+        psi_ = StatePathFormula(cap_delta)
+        phi = UntilPathFormula(phi_, psi_)
+
+        state0 = frozenset({a_lit})
+        s0 = Situation(state0)
+
+        t = SimpleTestCausalSetting()
+
+        p = Path(s0)
+        p.expand(t)
+
+        actual = phi.evaluate(p)
+        expected = 'Inconclusive'
+
+        self.assertEqual(expected, actual)
