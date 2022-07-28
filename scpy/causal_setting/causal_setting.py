@@ -1,4 +1,4 @@
-from typing import FrozenSet, Iterator, Callable, TypeAlias, Optional
+from typing import FrozenSet, Iterator, TypeAlias
 
 from frozendict import frozendict  # type: ignore
 from pydantic import Field

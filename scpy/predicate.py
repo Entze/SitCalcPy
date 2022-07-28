@@ -2,7 +2,7 @@
     TODO: Write docstring for module
 """
 
-from typing import Sequence, Union, TypeAlias
+from typing import Sequence, Union
 
 from pydantic import Field
 from pydantic.dataclasses import dataclass
@@ -20,6 +20,6 @@ class Predicate:
 
     def __str__(self) -> str:
         if self.arguments:
-            return "{}({})".format(self.functor, ','.join(str(argument) for argument in  self.arguments))
+            return "{}({})".format(self.functor, ','.join(str(argument) for argument in self.arguments))
         else:
             return self.functor

@@ -101,7 +101,7 @@ class ConjunctionFormula(PathFormula, StateFormula):
     def __str__(self) -> str:
         return "{} ∧ {}".format(self.left, self.right)
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace])-> Union[bool, Literal['Inconclusive']]:
+    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate(e)
         if left_res == 'Inconclusive' or not left_res:
             return left_res
@@ -145,6 +145,7 @@ class ConjunctionFormula(PathFormula, StateFormula):
         if right_res == 'Inconclusive':
             return right_res
         return left_res and right_res
+
 
 @dataclass(frozen=True, order=True)
 class DisjunctionFormula(PathFormula, StateFormula):

@@ -40,7 +40,7 @@ class NimCausalSetting(GameCausalSetting):
                 in_control = True
             if literal.sign and move.symbol == 'take' and literal.predicate.functor == 'stones':
                 assert isinstance(literal.predicate.arguments[0], int)
-                stones:int = literal.predicate.arguments[0]
+                stones: int = literal.predicate.arguments[0]
                 assert isinstance(move.arguments[0], int)
                 take: int = move.arguments[0]
                 valid_move = 1 <= take <= 3 and take <= stones

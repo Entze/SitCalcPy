@@ -18,7 +18,7 @@ class Formula:
     TODO: Write docstring for class
     """
 
-    def evaluate(self, e: Union[State, Situation, Path, Trace])  -> Union[bool, Literal['Inconclusive']]:
+    def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         if isinstance(e, frozenset):
             return self.evaluate_state(e)
         elif isinstance(e, Situation):
@@ -36,13 +36,8 @@ class Formula:
     def evaluate_situation(self, situation: Situation) -> bool:
         raise NotImplementedError
 
-    def evaluate_path(self, path: Path)-> Union[bool, Literal['Inconclusive']]:
+    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError
 
-    def evaluate_trace(self, trace: Trace)-> Union[bool, Literal['Inconclusive']]:
+    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
         raise NotImplementedError
-
-
-
-
-

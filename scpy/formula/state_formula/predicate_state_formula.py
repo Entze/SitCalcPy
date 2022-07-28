@@ -25,4 +25,3 @@ class PredicateStateFormula(StateFormula):
         if -lit in state:
             return False
         return lit in state
-

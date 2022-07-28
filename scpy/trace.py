@@ -6,7 +6,6 @@ from pydantic.dataclasses import dataclass
 
 from scpy.action import Action
 from scpy.causal_setting.causal_setting import CausalSetting
-from scpy.function import Function
 from scpy.state import State
 
 _Trace: TypeAlias = 'Trace'
@@ -61,5 +60,6 @@ class Trace:
         else:
             states_ = self.states[from_index:to_index]
             from_index_ = from_index + 1 if from_index is not None else None
-            actions_: Sequence[Action] = tuple(action for action in actions__[from_index_:to_index] if action is not None)
+            actions_: Sequence[Action] = tuple(
+                action for action in actions__[from_index_:to_index] if action is not None)
             return Trace(states_, actions_)

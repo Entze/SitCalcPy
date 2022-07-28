@@ -18,4 +18,4 @@ class PreconditionalActionStrategy(Strategy):
         if not causal_setting.poss_state(self.action, state):
             yield from ()
         elif self.condition.evaluate(state):
-                yield self.action
+            yield self.action
