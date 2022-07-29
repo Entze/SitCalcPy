@@ -1,4 +1,3 @@
-
 # noinspection DuplicatedCode
 import unittest
 
@@ -21,11 +20,11 @@ remove_b: Action = Function('remove', (b,))
 class TestConstructor(unittest.TestCase):
 
     def test_create_simple(self):
-
         a_pred = Predicate('a')
         cond = PredicateStateFormula(a_pred)
 
         strat = PreconditionalActionStrategy(cond, remove_a)
+
 
 class TestAllApplicableActions(unittest.TestCase):
 
@@ -58,7 +57,3 @@ class TestAllApplicableActions(unittest.TestCase):
         actual = set(strat.all_applicable_actions(t, state0))
         expected = set()
         self.assertSetEqual(expected, actual)
-
-
-
-

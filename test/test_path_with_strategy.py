@@ -44,6 +44,7 @@ class TestConstructor(unittest.TestCase):
         s0 = Situation(state0)
         p = PathWithStrategy(s0, strategy=strat)
 
+
 class TestExpand(unittest.TestCase):
 
     def test_simple_none(self):
@@ -119,7 +120,7 @@ class TestExpand(unittest.TestCase):
 
         actual = p.traces
         expected = {
-            Trace((state0,state1), (add_a,))
+            Trace((state0, state1), (add_a,))
         }
 
         self.assertSetEqual(expected, actual)
@@ -154,7 +155,7 @@ class TestExpand(unittest.TestCase):
 
         actual = p.traces
         expected = {
-            Trace((state0,state1, state2), (add_a,add_b))
+            Trace((state0, state1, state2), (add_a, add_b))
         }
 
         self.assertSetEqual(expected, actual)
@@ -191,7 +192,7 @@ class TestExpand(unittest.TestCase):
 
         actual = p.traces
         expected = {
-            Trace((state0,state1, state2, state3), (add_a,add_b,remove_b))
+            Trace((state0, state1, state2, state3), (add_a, add_b, remove_b))
         }
 
         self.assertSetEqual(expected, actual)
@@ -276,7 +277,6 @@ class TestExpand(unittest.TestCase):
 
         self.assertSetEqual(expected, actual)
 
-
     def test_complex_thrice(self):
         a_pred = Predicate('a')
         a_lit = Literal(a_pred)
@@ -350,20 +350,20 @@ class TestExpand(unittest.TestCase):
         strat = ChoiceStrategy(strat_a, strat_ex)
 
         state1 = frozenset()
-        state1a = frozenset({a_lit})                  # add(a)
-        state1a1 = frozenset({a_lit, b_lit})          # add(a) add(b)
-        state1a1a = frozenset({a_lit, -b_lit})        # add(a) add(b) remove(b)
+        state1a = frozenset({a_lit})  # add(a)
+        state1a1 = frozenset({a_lit, b_lit})  # add(a) add(b)
+        state1a1a = frozenset({a_lit, -b_lit})  # add(a) add(b) remove(b)
         state1a1b = frozenset({a_lit, b_lit, c_lit})  # add(a) add(b) add(c)
-        state1a2 = frozenset({a_lit, c_lit})          # add(a) add(c)
+        state1a2 = frozenset({a_lit, c_lit})  # add(a) add(c)
         state1a2a = frozenset({a_lit, b_lit, c_lit})  # add(a) add(c) add(b)
-        state1a2b = frozenset({a_lit, -c_lit})        # add(a) add(c) remove(b)
-        state1b = frozenset({c_lit})                  # add(c)
-        state1b1 = frozenset({a_lit, c_lit})          # add(c) add(a)
+        state1a2b = frozenset({a_lit, -c_lit})  # add(a) add(c) remove(b)
+        state1b = frozenset({c_lit})  # add(c)
+        state1b1 = frozenset({a_lit, c_lit})  # add(c) add(a)
         state1b1a = frozenset({a_lit, b_lit, c_lit})  # add(c) add(a) add(b)
-        state1b1b = frozenset({a_lit, -c_lit})        # add(c) add(a) remove(c)
-        state1b2 = frozenset({-c_lit})                # add(c) remove(c)
-        state1b2a = frozenset({c_lit})                # add(c) remove(c) add(c)
-        state1b2b = frozenset({a_lit,-c_lit})         # add(c) remove(c) add(a)
+        state1b1b = frozenset({a_lit, -c_lit})  # add(c) add(a) remove(c)
+        state1b2 = frozenset({-c_lit})  # add(c) remove(c)
+        state1b2a = frozenset({c_lit})  # add(c) remove(c) add(c)
+        state1b2b = frozenset({a_lit, -c_lit})  # add(c) remove(c) add(a)
         s0 = Situation(state1)
         p = PathWithStrategy(s0, strategy=strat)
 

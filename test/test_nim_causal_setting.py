@@ -162,6 +162,7 @@ class TestAllPossActions(unittest.TestCase):
         }
         self.assertSetEqual(expected, actual)
 
+
 class TestWithPaths(unittest.TestCase):
 
     def test_simple(self):

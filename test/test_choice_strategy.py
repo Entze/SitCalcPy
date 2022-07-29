@@ -1,4 +1,3 @@
-
 # noinspection DuplicatedCode
 import unittest
 
@@ -33,7 +32,6 @@ class TestConstructor(unittest.TestCase):
 
 
 class TestAllApplicableActions(unittest.TestCase):
-
 
     def test_simple(self):
         a_pred = Predicate('a')

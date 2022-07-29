@@ -210,7 +210,6 @@ class TestEvaluatePath(unittest.TestCase):
         state0 = frozenset({a_lit, b_lit})
         s0 = Situation(state0)
 
-
         p = Path(s0)
 
         actual = phi.evaluate(p)

@@ -17,6 +17,7 @@ class TestConstructor(unittest.TestCase):
         actual = phi.predicate.functor
         self.assertEqual(expected, actual)
 
+
 class TestEvaluateSituation(unittest.TestCase):
 
     def test_simple(self):
@@ -60,6 +61,7 @@ class TestEvaluateSituation(unittest.TestCase):
         expected = False
         actual = phi.evaluate(s0)
         self.assertEqual(expected, actual)
+
 
 class TestEvaluateState(unittest.TestCase):
 
