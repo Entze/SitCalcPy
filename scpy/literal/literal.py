@@ -6,7 +6,7 @@ from typing import TypeAlias
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.predicate import Predicate
+from scpy.predicate.predicate import Predicate
 
 _Literal: TypeAlias = 'Literal'
 

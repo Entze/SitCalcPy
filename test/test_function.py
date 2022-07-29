@@ -1,7 +1,7 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.function import Function
+from scpy.function.function import Function
 
 
 class TestConstructor(unittest.TestCase):

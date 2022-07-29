@@ -1,10 +1,10 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.function import Function
-from scpy.literal import Literal
-from scpy.predicate import Predicate
-from scpy.trace import Trace
+from scpy.function.function import Function
+from scpy.literal.literal import Literal
+from scpy.predicate.predicate import Predicate
+from scpy.trace.trace import Trace
 
 a = Literal(Predicate('a'))
 b = Literal(Predicate('b'))

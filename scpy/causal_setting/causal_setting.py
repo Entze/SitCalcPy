@@ -4,11 +4,11 @@ from frozendict import frozendict  # type: ignore
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.action import Action
-from scpy.agent import Agent
-from scpy.predicate import Predicate
-from scpy.situation import Situation
-from scpy.state import State
+from scpy.action.action import Action
+from scpy.agent.agent import Agent
+from scpy.predicate.predicate import Predicate
+from scpy.situation.situation import Situation
+from scpy.state.state import State
 
 _CausalSetting: TypeAlias = 'CausalSetting'
 

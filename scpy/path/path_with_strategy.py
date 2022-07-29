@@ -1,26 +1,16 @@
-from typing import Set
-
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 from scpy.causal_setting.causal_setting import CausalSetting
-from scpy.situation import Situation
-from scpy.trace import Trace
+from scpy.path.path import Path
+from scpy.strategy.choice_strategy import ChoiceStrategy
+from scpy.strategy.strategy import Strategy
+from scpy.trace.trace import Trace
 
 
 @dataclass
-class Path:
-    initial_situation: Situation
-    traces: Set[Trace] = Field(default_factory=set)
-    len: int = Field(default=0)
-
-    def __len__(self) -> int:
-        return self.len
-
-    def __str__(self) -> str:
-        if self.len == 0:
-            return "{}"
-        return repr(self)
+class PathWithStrategy(Path):
+    strategy: Strategy = Field(default_factory=ChoiceStrategy)  # type: ignore
 
     def expand(self, causal_setting: CausalSetting) -> None:
         if not self.traces:
@@ -30,7 +20,8 @@ class Path:
             traces = set()
             for trace in self.traces:
                 state = trace.last_state
-                for action in causal_setting.all_poss_actions_state(state):
+                applicable_actions = self.strategy.all_applicable_actions(causal_setting, state)
+                for action in applicable_actions:
                     trace_ = trace.extend(causal_setting, action)
                     traces.add(trace_)
             self.traces = traces

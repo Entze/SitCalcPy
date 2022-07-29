@@ -1,7 +1,7 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.predicate import Predicate
+from scpy.predicate.predicate import Predicate
 
 
 class TestConstructor(unittest.TestCase):

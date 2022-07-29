@@ -7,9 +7,9 @@ from frozendict import frozendict  # type: ignore
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.action import Action
-from scpy.agent import Agent
-from scpy.state import State
+from scpy.action.action import Action
+from scpy.agent.agent import Agent
+from scpy.state.state import State
 
 _Situation: TypeAlias = 'Situation'
 

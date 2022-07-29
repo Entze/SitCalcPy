@@ -4,9 +4,9 @@ from typing import Sequence, TypeAlias, Optional, List
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.action import Action
+from scpy.action.action import Action
 from scpy.causal_setting.causal_setting import CausalSetting
-from scpy.state import State
+from scpy.state.state import State
 
 _Trace: TypeAlias = 'Trace'
 

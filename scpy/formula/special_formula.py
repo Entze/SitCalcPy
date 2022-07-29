@@ -5,10 +5,10 @@ from pydantic.dataclasses import dataclass
 from scpy.formula.formula import Formula
 from scpy.formula.path_formula.path_formula import PathFormula
 from scpy.formula.state_formula.state_formula import StateFormula
-from scpy.path import Path
-from scpy.situation import Situation
-from scpy.state import State
-from scpy.trace import Trace
+from scpy.path.path import Path
+from scpy.situation.situation import Situation
+from scpy.state.state import State
+from scpy.trace.trace import Trace
 
 
 @dataclass(frozen=True, order=True)
@@ -48,10 +48,10 @@ class FalseFormula(PathFormula, StateFormula):
     def evaluate_situation(self, situation: Situation) -> bool:
         return False
 
-    def evaluate_path(self, path: Path) -> Union[bool, Literal['Inconclusive']]:
+    def evaluate_path(self, path: Path) -> bool:
         return False
 
-    def evaluate_trace(self, trace: Trace) -> Union[bool, Literal['Inconclusive']]:
+    def evaluate_trace(self, trace: Trace) -> bool:
         return False
 
 

@@ -6,10 +6,10 @@ from typing import Union, Literal
 
 from pydantic.dataclasses import dataclass
 
-from scpy.path import Path
-from scpy.situation import Situation
-from scpy.state import State
-from scpy.trace import Trace
+from scpy.path.path import Path
+from scpy.situation.situation import Situation
+from scpy.state.state import State
+from scpy.trace.trace import Trace
 
 
 @dataclass(frozen=True, order=True)

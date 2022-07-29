@@ -7,7 +7,7 @@ from typing import Sequence, Union
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.function import Function
+from scpy.function.function import Function
 
 
 @dataclass(frozen=True, order=True)

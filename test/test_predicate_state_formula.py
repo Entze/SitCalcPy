@@ -3,9 +3,9 @@ import unittest
 
 from scpy.formula.special_formula import NegationFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.literal import Literal
-from scpy.predicate import Predicate
-from scpy.situation import Situation
+from scpy.literal.literal import Literal
+from scpy.predicate.predicate import Predicate
+from scpy.situation.situation import Situation
 
 
 class TestConstructor(unittest.TestCase):

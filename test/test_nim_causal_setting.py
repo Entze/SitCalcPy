@@ -3,10 +3,10 @@ import unittest
 
 from scpy.causal_setting.game_causal_setting import GameCausalSetting
 from scpy.causal_setting.nim_causal_setting import NimCausalSetting
-from scpy.function import Function
-from scpy.literal import Literal
-from scpy.path import Path
-from scpy.situation import Situation
+from scpy.function.function import Function
+from scpy.literal.literal import Literal
+from scpy.path.path import Path
+from scpy.situation.situation import Situation
 
 
 class TestConstructor(unittest.TestCase):

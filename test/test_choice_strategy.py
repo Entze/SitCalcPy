@@ -2,11 +2,11 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.action import Action
+from scpy.action.action import Action
 from scpy.formula.special_formula import NegationFormula, TrueFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.function import Function
-from scpy.predicate import Predicate
+from scpy.function.function import Function
+from scpy.predicate.predicate import Predicate
 from scpy.strategy.choice_strategy import ChoiceStrategy
 from scpy.strategy.preconditional_action_strategy import PreconditionalActionStrategy
 from test.simple_test_causal_setting import SimpleTestCausalSetting

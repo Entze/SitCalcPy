@@ -6,10 +6,10 @@ from scpy.formula.path_formula.state_path_formula import StatePathFormula
 from scpy.formula.path_formula.until_path_formula import UntilPathFormula
 from scpy.formula.special_formula import NegationFormula, ConjunctionFormula, DisjunctionFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.literal import Literal
-from scpy.path import Path
-from scpy.predicate import Predicate
-from scpy.situation import Situation
+from scpy.literal.literal import Literal
+from scpy.path.path import Path
+from scpy.predicate.predicate import Predicate
+from scpy.situation.situation import Situation
 from test.simple_test_causal_setting import SimpleTestCausalSetting
 
 

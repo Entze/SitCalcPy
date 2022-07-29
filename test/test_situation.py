@@ -1,7 +1,7 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.situation import Situation
+from scpy.situation.situation import Situation
 
 
 class TestConstructor(unittest.TestCase):
