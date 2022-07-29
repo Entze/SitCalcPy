@@ -1,14 +1,13 @@
 """
     TODO: Write docstring for module
 """
-from typing import Optional, TypeAlias, Mapping, FrozenSet
+from typing import Optional, TypeAlias
 
 from frozendict import frozendict  # type: ignore
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 from scpy.action.action import Action
-from scpy.agent.agent import Agent
 from scpy.state.state import State
 
 _Situation: TypeAlias = 'Situation'
@@ -22,7 +21,6 @@ class Situation:
     state: State = Field(default_factory=frozenset)
     previous_action: Optional[Action] = Field(default=None)
     previous_situation: Optional[_Situation] = Field(default=None, repr=False)
-    knowledge_relation: Mapping[Agent, FrozenSet[_Situation]] = Field(default_factory=frozendict)
 
     def __str__(self) -> str:
         if self.previous_action is not None:
