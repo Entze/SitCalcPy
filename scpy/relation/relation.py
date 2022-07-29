@@ -1,12 +1,9 @@
-from collections import defaultdict
-from typing import TypeVar, MutableMapping, Set, Any, Optional, Tuple
+from typing import TypeVar
 
 _T = TypeVar('_T')
 _U = TypeVar('_U')
 
-
-
-#class Relation:
+# class Relation:
 #
 #    def __init__(self, initial_mapping:Optional[Tuple[]]):
 #        self.__internal_mapping: MutableMapping[_T, Set[_U]] = defaultdict(lambda: set())

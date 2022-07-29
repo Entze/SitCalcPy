@@ -1,5 +1,3 @@
-from copy import deepcopy
-from numbers import Number
 from typing import Mapping, FrozenSet
 
 from frozendict import frozendict  # type: ignore

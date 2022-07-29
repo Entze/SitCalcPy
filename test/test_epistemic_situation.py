@@ -92,8 +92,6 @@ class TestDo(unittest.TestCase):
 
         self.assertDictEqual(expected, actual)
 
-
-
     def test_look(self):
         a_pred = Predicate('a')
         a_lit = Literal(a_pred)
