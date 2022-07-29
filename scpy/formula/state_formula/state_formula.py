@@ -1,6 +1,3 @@
-"""
-    TODO: Write docstring for module
-"""
 from typing import Union, Literal
 
 from pydantic.dataclasses import dataclass

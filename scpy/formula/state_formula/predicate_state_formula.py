@@ -1,6 +1,3 @@
-"""
-    TODO: Write docstring for module
-"""
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -12,9 +9,6 @@ from scpy.state.state import State
 
 @dataclass(frozen=True, order=True)
 class PredicateStateFormula(StateFormula):
-    """
-    TODO: Write docstring for class
-    """
     predicate: Predicate = Field(default_factory=Predicate)
 
     def __str__(self) -> str:

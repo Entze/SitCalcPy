@@ -1,6 +1,3 @@
-"""
-    TODO: Write docstring for module
-"""
 import typing
 from typing import Union, Literal
 
@@ -14,9 +11,6 @@ from scpy.trace.trace import Trace
 
 @dataclass(frozen=True, order=True)
 class Formula:
-    """
-    TODO: Write docstring for class
-    """
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         if isinstance(e, frozenset):

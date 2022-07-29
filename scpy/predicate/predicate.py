@@ -1,7 +1,3 @@
-"""
-    TODO: Write docstring for module
-"""
-
 from typing import Sequence, Union
 
 from pydantic import Field
@@ -12,9 +8,6 @@ from scpy.function.function import Function
 
 @dataclass(frozen=True, order=True)
 class Predicate:
-    """
-    TODO: Write docstring for class
-    """
     functor: str = Field(default="")
     arguments: Sequence[Union[Function, int]] = Field(default_factory=tuple)
 

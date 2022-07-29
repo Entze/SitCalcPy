@@ -1,6 +1,3 @@
-"""
-    TODO: Write docstring for module
-"""
 from typing import TypeAlias
 
 from pydantic import Field
@@ -13,9 +10,6 @@ _Literal: TypeAlias = 'Literal'
 
 @dataclass(frozen=True, order=True)
 class Literal:
-    """
-    TODO: Write docstring for class
-    """
     predicate: Predicate = Field(default_factory=Predicate)
     sign: bool = Field(default=True)
 
