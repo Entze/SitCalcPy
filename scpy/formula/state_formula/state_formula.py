@@ -2,14 +2,14 @@ from typing import Union, Literal
 
 from pydantic.dataclasses import dataclass
 
-from scpy.formula.formula import Formula
+from scpy.formula.evaluable_formula import EvaluableFormula
 from scpy.path.path import Path
 from scpy.situation.situation import Situation
 from scpy.trace.trace import Trace
 
 
 @dataclass(frozen=True, order=True)
-class StateFormula(Formula):
+class StateFormula(EvaluableFormula):
 
     def evaluate_situation(self, situation: Situation) -> bool:
         return self.evaluate_state(situation.state)

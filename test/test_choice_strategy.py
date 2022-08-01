@@ -2,7 +2,8 @@
 import unittest
 
 from scpy.action.action import Action
-from scpy.formula.special_formula import NegationFormula, TrueFormula
+from scpy.formula.negation_formula import EvaluableNegationFormula
+from scpy.formula.special_formula import TrueFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
 from scpy.function.function import Function
 from scpy.predicate.predicate import Predicate
@@ -23,7 +24,7 @@ class TestConstructor(unittest.TestCase):
     def test_create_simple(self):
         a_pred = Predicate('a')
         cond_1 = PredicateStateFormula(a_pred)
-        cond_2 = NegationFormula(PredicateStateFormula(a_pred))
+        cond_2 = EvaluableNegationFormula(PredicateStateFormula(a_pred))
 
         strat1 = PreconditionalActionStrategy(cond_1, add_b)
         strat2 = PreconditionalActionStrategy(cond_2, add_a)
@@ -37,7 +38,7 @@ class TestAllApplicableActions(unittest.TestCase):
         a_pred = Predicate('a')
 
         cond_1 = PredicateStateFormula(a_pred)
-        cond_2 = NegationFormula(PredicateStateFormula(a_pred))
+        cond_2 = EvaluableNegationFormula(PredicateStateFormula(a_pred))
 
         strat1 = PreconditionalActionStrategy(cond_1, add_b)
         strat2 = PreconditionalActionStrategy(cond_2, add_a)

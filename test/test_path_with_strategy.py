@@ -2,7 +2,8 @@
 import unittest
 
 from scpy.action.action import Action
-from scpy.formula.special_formula import NegationFormula, TrueFormula
+from scpy.formula.negation_formula import EvaluableNegationFormula
+from scpy.formula.special_formula import TrueFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
 from scpy.function.function import Function
 from scpy.literal.literal import Literal
@@ -29,7 +30,7 @@ class TestConstructor(unittest.TestCase):
 
     def test_create_simple(self):
         a_pred = Predicate('a')
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -49,7 +50,7 @@ class TestExpand(unittest.TestCase):
 
     def test_simple_none(self):
         a_pred = Predicate('a')
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -70,7 +71,7 @@ class TestExpand(unittest.TestCase):
 
     def test_simple_once(self):
         a_pred = Predicate('a')
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -97,7 +98,7 @@ class TestExpand(unittest.TestCase):
     def test_simple_twice(self):
         a_pred = Predicate('a')
         a_lit = Literal(a_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -130,7 +131,7 @@ class TestExpand(unittest.TestCase):
         a_lit = Literal(a_pred)
         b_pred = Predicate('b')
         b_lit = Literal(b_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -165,7 +166,7 @@ class TestExpand(unittest.TestCase):
         a_lit = Literal(a_pred)
         b_pred = Predicate('b')
         b_lit = Literal(b_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -204,7 +205,7 @@ class TestExpand(unittest.TestCase):
         b_lit = Literal(b_pred)
         c_pred = Predicate('c')
         c_lit = Literal(c_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -242,7 +243,7 @@ class TestExpand(unittest.TestCase):
         b_lit = Literal(b_pred)
         c_pred = Predicate('c')
         c_lit = Literal(c_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -284,7 +285,7 @@ class TestExpand(unittest.TestCase):
         b_lit = Literal(b_pred)
         c_pred = Predicate('c')
         c_lit = Literal(c_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)
@@ -333,7 +334,7 @@ class TestExpand(unittest.TestCase):
         b_lit = Literal(b_pred)
         c_pred = Predicate('c')
         c_lit = Literal(c_pred)
-        cond_a = NegationFormula(PredicateStateFormula(a_pred))
+        cond_a = EvaluableNegationFormula(PredicateStateFormula(a_pred))
         cond_a_comp = PredicateStateFormula(a_pred)
 
         strat_a = PreconditionalActionStrategy(cond_a, add_a)

@@ -3,6 +3,7 @@ from typing import Union, Literal
 
 from pydantic.dataclasses import dataclass
 
+from scpy.formula.formula import Formula
 from scpy.path.path import Path
 from scpy.situation.situation import Situation
 from scpy.state.state import State
@@ -10,7 +11,7 @@ from scpy.trace.trace import Trace
 
 
 @dataclass(frozen=True, order=True)
-class Formula:
+class EvaluableFormula(Formula):
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         if isinstance(e, frozenset):

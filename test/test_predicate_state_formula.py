@@ -1,7 +1,7 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.formula.special_formula import NegationFormula
+from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
 from scpy.literal.literal import Literal
 from scpy.predicate.predicate import Predicate
@@ -33,7 +33,7 @@ class TestEvaluateSituation(unittest.TestCase):
     def test_negation(self):
         a = Predicate('a')
         a_lit = Literal(a)
-        phi = NegationFormula(PredicateStateFormula(a))
+        phi = EvaluableNegationFormula(PredicateStateFormula(a))
         state = frozenset({-a_lit})
         s0 = Situation(state)
         expected = True
@@ -45,7 +45,7 @@ class TestEvaluateSituation(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         b_lit = Literal(b)
-        phi = NegationFormula(PredicateStateFormula(a))
+        phi = EvaluableNegationFormula(PredicateStateFormula(a))
         state = frozenset({b_lit})
         s0 = Situation(state)
         expected = True

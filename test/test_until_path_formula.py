@@ -1,10 +1,12 @@
 # noinspection DuplicatedCode
 import unittest
 
+from scpy.formula.conjunction_formula import EvaluableConjunctionFormula
+from scpy.formula.disjunction_formula import EvaluableDisjunctionFormula
+from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.path_formula.next_path_formula import NextPathFormula
 from scpy.formula.path_formula.state_path_formula import StatePathFormula
 from scpy.formula.path_formula.until_path_formula import UntilPathFormula
-from scpy.formula.special_formula import NegationFormula, ConjunctionFormula, DisjunctionFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
 from scpy.literal.literal import Literal
 from scpy.path.path import Path
@@ -18,7 +20,7 @@ class TestConstructor(unittest.TestCase):
     def test_create_simple(self):
         a = Predicate('a')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         phi_ = StatePathFormula(cap_phi)
         psi_ = StatePathFormula(cap_phi_comp)
         phi = UntilPathFormula(phi_, psi_)
@@ -30,7 +32,7 @@ class TestEvaluatePath(unittest.TestCase):
         a = Predicate('a')
         a_lit = Literal(a)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         phi_ = StatePathFormula(cap_phi)
         psi_ = StatePathFormula(cap_phi_comp)
         phi = UntilPathFormula(phi_, psi_)
@@ -53,7 +55,7 @@ class TestEvaluatePath(unittest.TestCase):
         a = Predicate('a')
         a_lit = Literal(a)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         phi_ = StatePathFormula(cap_phi)
         psi_ = StatePathFormula(cap_phi_comp)
         phi = UntilPathFormula(phi_, psi_)
@@ -72,9 +74,9 @@ class TestEvaluatePath(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        psi_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        psi_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         phi_ = StatePathFormula(cap_phi)
         phi = UntilPathFormula(phi_, psi_)
 
@@ -97,9 +99,9 @@ class TestEvaluatePath(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        delta_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        delta_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         psi_ = NextPathFormula(delta_)
         phi_ = StatePathFormula(cap_phi)
         phi = UntilPathFormula(phi_, psi_)
@@ -121,9 +123,9 @@ class TestEvaluatePath(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        delta_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        delta_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         psi_ = NextPathFormula(delta_)
         phi_ = StatePathFormula(cap_phi)
         phi = UntilPathFormula(phi_, psi_)
@@ -146,9 +148,9 @@ class TestEvaluatePath(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        delta_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        delta_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         psi_ = NextPathFormula(delta_)
         phi_ = StatePathFormula(cap_phi)
         phi = UntilPathFormula(phi_, psi_)
@@ -172,9 +174,9 @@ class TestEvaluatePath(unittest.TestCase):
         a_lit = Literal(a)
         b = Predicate('b')
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        delta_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        delta_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         psi_ = NextPathFormula(delta_)
         phi_ = StatePathFormula(cap_phi)
         phi = UntilPathFormula(phi_, psi_)
@@ -200,11 +202,11 @@ class TestEvaluatePath(unittest.TestCase):
         b = Predicate('b')
         b_lit = Literal(b)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        cap_delta_comp = NegationFormula(PredicateStateFormula(b))
-        psi_ = DisjunctionFormula(cap_phi_comp, cap_delta_comp)
-        phi_ = ConjunctionFormula(cap_phi, cap_delta)
+        cap_delta_comp = EvaluableNegationFormula(PredicateStateFormula(b))
+        psi_ = EvaluableDisjunctionFormula(cap_phi_comp, cap_delta_comp)
+        phi_ = EvaluableConjunctionFormula(cap_phi, cap_delta)
         phi = UntilPathFormula(phi_, psi_)
 
         state0 = frozenset({a_lit, b_lit})
@@ -223,11 +225,11 @@ class TestEvaluatePath(unittest.TestCase):
         b = Predicate('b')
         b_lit = Literal(b)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        cap_delta_comp = NegationFormula(PredicateStateFormula(b))
-        psi_ = DisjunctionFormula(cap_phi_comp, cap_delta_comp)
-        phi_ = ConjunctionFormula(cap_phi, cap_delta)
+        cap_delta_comp = EvaluableNegationFormula(PredicateStateFormula(b))
+        psi_ = EvaluableDisjunctionFormula(cap_phi_comp, cap_delta_comp)
+        phi_ = EvaluableConjunctionFormula(cap_phi, cap_delta)
         phi = UntilPathFormula(phi_, psi_)
 
         state0 = frozenset({a_lit, b_lit})
@@ -249,11 +251,11 @@ class TestEvaluatePath(unittest.TestCase):
         b = Predicate('b')
         b_lit = Literal(b)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        cap_delta_comp = NegationFormula(PredicateStateFormula(b))
-        psi_ = DisjunctionFormula(cap_phi_comp, cap_delta_comp)
-        phi_ = ConjunctionFormula(cap_phi, cap_delta)
+        cap_delta_comp = EvaluableNegationFormula(PredicateStateFormula(b))
+        psi_ = EvaluableDisjunctionFormula(cap_phi_comp, cap_delta_comp)
+        phi_ = EvaluableConjunctionFormula(cap_phi, cap_delta)
         phi = UntilPathFormula(phi_, psi_)
 
         state0 = frozenset({a_lit, b_lit})
@@ -276,10 +278,10 @@ class TestEvaluatePath(unittest.TestCase):
         b = Predicate('b')
         b_lit = Literal(b)
         cap_phi = PredicateStateFormula(a)
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        cap_delta_comp = NegationFormula(PredicateStateFormula(b))
-        phi_ = NextPathFormula(ConjunctionFormula(cap_phi, cap_delta))
+        cap_delta_comp = EvaluableNegationFormula(PredicateStateFormula(b))
+        phi_ = NextPathFormula(EvaluableConjunctionFormula(cap_phi, cap_delta))
         psi_ = StatePathFormula(cap_delta)
         phi = UntilPathFormula(phi_, psi_)
 

@@ -1,9 +1,10 @@
 # noinspection DuplicatedCode
 import unittest
 
+from scpy.formula.conjunction_formula import EvaluableConjunctionFormula
+from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.path_formula.next_path_formula import NextPathFormula
 from scpy.formula.path_formula.state_path_formula import StatePathFormula
-from scpy.formula.special_formula import NegationFormula, ConjunctionFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
 from scpy.literal.literal import Literal
 from scpy.path.path import Path
@@ -97,9 +98,9 @@ class TestEvaluatePath(unittest.TestCase):
         a = Predicate('a')
         a_lit = Literal(a)
         b = Predicate('b')
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        phi_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        phi_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         phi = NextPathFormula(phi_)
 
         state0 = frozenset({a_lit})
@@ -118,9 +119,9 @@ class TestEvaluatePath(unittest.TestCase):
         a = Predicate('a')
         a_lit = Literal(a)
         b = Predicate('b')
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        phi_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        phi_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         phi = NextPathFormula(phi_)
 
         state0 = frozenset({a_lit})
@@ -140,9 +141,9 @@ class TestEvaluatePath(unittest.TestCase):
         a = Predicate('a')
         a_lit = Literal(a)
         b = Predicate('b')
-        cap_phi_comp = NegationFormula(PredicateStateFormula(a))
+        cap_phi_comp = EvaluableNegationFormula(PredicateStateFormula(a))
         cap_delta = PredicateStateFormula(b)
-        phi_ = ConjunctionFormula(cap_phi_comp, cap_delta)
+        phi_ = EvaluableConjunctionFormula(cap_phi_comp, cap_delta)
         phi = NextPathFormula(phi_)
 
         state0 = frozenset({a_lit})
