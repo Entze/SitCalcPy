@@ -53,7 +53,3 @@ class FalseFormula(PathFormula, StateFormula, PalatFormula):
 
     def evaluate_trace(self, trace: Trace) -> bool:
         return False
-
-
-
-
