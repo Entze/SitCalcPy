@@ -14,6 +14,7 @@ class SimpleCausalSetting(CausalSetting):
     def do_state(self, action: Action, state: State) -> State:
         elem_raw = action.arguments[0]
         assert isinstance(elem_raw, Function)
+        assert elem_raw.symbol is not None
         elem = Predicate(elem_raw.symbol, elem_raw.arguments)
         elem_lit = Literal(elem)
         if action.symbol == 'add':
@@ -34,6 +35,8 @@ class SimpleCausalSetting(CausalSetting):
         if action.symbol in ('add', 'remove'):
             elem_raw = action.arguments[0]
             if not isinstance(elem_raw, Function):
+                return False
+            if elem_raw.symbol is None:
                 return False
             elem = Predicate(elem_raw.symbol, elem_raw.arguments)
             elem_lit = Literal(elem)
