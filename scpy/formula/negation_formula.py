@@ -17,13 +17,13 @@ from scpy.trace.trace import Trace
 class NegationFormula(PalatFormula):
     formula: Formula
 
+    def __str__(self) -> str:
+        return "¬{}".format(self.formula)
+
 
 @dataclass(frozen=True, order=True)
 class EvaluableNegationFormula(NegationFormula, PathFormula, StateFormula):
     formula: EvaluableFormula
-
-    def __str__(self) -> str:
-        return "¬{}".format(self.formula)
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         res = self.formula.evaluate(e)

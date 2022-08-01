@@ -18,14 +18,14 @@ class DisjunctionFormula(PalatFormula):
     left: Formula
     right: Formula
 
+    def __str__(self) -> str:
+        return "{} ∨ {}".format(self.left, self.right)
 
 @dataclass(frozen=True, order=True)
 class EvaluableDisjunctionFormula(DisjunctionFormula, PathFormula, StateFormula):
     left: EvaluableFormula
     right: EvaluableFormula
 
-    def __str__(self) -> str:
-        return "{} ∨ {}".format(self.left, self.right)
 
     def evaluate(self, e: Union[State, Situation, Path, Trace]) -> Union[bool, Literal['Inconclusive']]:
         left_res = self.left.evaluate(e)
