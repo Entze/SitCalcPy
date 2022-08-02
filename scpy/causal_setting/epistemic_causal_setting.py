@@ -1,6 +1,6 @@
 from typing import FrozenSet
 
-from frozendict import frozendict # type: ignore
+from frozendict import frozendict  # type: ignore
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
