@@ -1,4 +1,3 @@
-
 # noinspection DuplicatedCode
 import unittest
 
@@ -21,6 +20,7 @@ test_actions = frozenset({
     Function('public_test', ()),
     Function('public_assignment', ())
 })
+
 
 class TestConstructor(unittest.TestCase):
 
