@@ -2,7 +2,7 @@ from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping
 
 from frozendict import frozendict  # type: ignore
 
-from scpy.function.function import Function
+from scpy.primitives import Function
 
 _Preorder: TypeAlias = 'Preorder'
 

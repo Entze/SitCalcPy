@@ -2,9 +2,7 @@
 import unittest
 
 from scpy.causal_setting.palat_causal_setting import PalatCausalSetting
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Literal, Predicate
 
 a_pred = Predicate('a')
 b_pred = Predicate('b')

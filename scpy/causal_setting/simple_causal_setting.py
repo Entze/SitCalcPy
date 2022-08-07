@@ -2,9 +2,7 @@ from pydantic.dataclasses import dataclass
 
 from scpy.action.action import Action
 from scpy.causal_setting.causal_setting import CausalSetting
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Literal, Predicate
 from scpy.state.state import State
 
 

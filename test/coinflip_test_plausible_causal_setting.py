@@ -8,9 +8,7 @@ from pydantic.dataclasses import dataclass
 from scpy.action.action import Action
 from scpy.agent.agent import Agent
 from scpy.causal_setting.plausible_causal_setting import PlausibleCausalSetting
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Literal, Predicate
 from scpy.situation.plausible_situation import PlausibleSituation
 from scpy.state.state import State
 

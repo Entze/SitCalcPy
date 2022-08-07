@@ -3,8 +3,7 @@ from pydantic.dataclasses import dataclass
 from scpy.action.action import Action
 from scpy.agent.agent import Agent
 from scpy.causal_setting.causal_setting import CausalSetting
-from scpy.function.function import Function
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Predicate
 from scpy.situation.situation import Situation
 from scpy.state.state import State
 

@@ -4,9 +4,7 @@ import unittest
 
 from frozendict import frozendict
 
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Literal, Predicate
 from scpy.situation.epistemic_situation import EpistemicSituation
 from test.simple_test_epistempic_causal_setting import SimpleTestEpistemicCausalSetting
 

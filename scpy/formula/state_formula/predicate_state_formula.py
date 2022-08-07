@@ -2,8 +2,7 @@ from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 from scpy.formula.state_formula.state_formula import StateFormula
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Literal, Predicate
 from scpy.state.state import State
 
 

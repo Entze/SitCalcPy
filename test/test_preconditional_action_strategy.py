@@ -3,9 +3,7 @@ import unittest
 
 from scpy.action.action import Action
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Literal, Predicate
 from scpy.strategy.preconditional_action_strategy import PreconditionalActionStrategy
 from test.simple_test_causal_setting import SimpleTestCausalSetting
 

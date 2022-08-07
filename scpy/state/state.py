@@ -1,5 +1,5 @@
 from typing import TypeAlias, FrozenSet
 
-from scpy.literal.literal import Literal
+from scpy.primitives import Literal
 
 State: TypeAlias = FrozenSet[Literal]

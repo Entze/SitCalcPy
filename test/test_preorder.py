@@ -1,7 +1,7 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.function.function import Function
+from scpy.primitives import Function
 from scpy.preorder import MutablePreorder, Preorder
 
 

@@ -3,8 +3,7 @@ import unittest
 
 from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.literal.literal import Literal
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Literal, Predicate
 from scpy.situation.situation import Situation
 
 

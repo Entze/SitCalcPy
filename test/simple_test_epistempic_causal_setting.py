@@ -9,8 +9,7 @@ from pydantic.dataclasses import dataclass
 from scpy.action.action import Action
 from scpy.agent.agent import Agent
 from scpy.causal_setting.game_causal_setting import GameCausalSetting
-from scpy.function.function import Function
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Predicate
 from scpy.situation.epistemic_situation import EpistemicSituation
 from scpy.state.state import State
 

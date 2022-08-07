@@ -5,8 +5,7 @@ from scpy.action.action import Action
 from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.special_formula import TrueFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.function.function import Function
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Function, Predicate
 from scpy.strategy.choice_strategy import ChoiceStrategy
 from scpy.strategy.preconditional_action_strategy import PreconditionalActionStrategy
 from test.simple_test_causal_setting import SimpleTestCausalSetting

@@ -4,11 +4,9 @@ from frozendict import frozendict  # type: ignore
 from pydantic.dataclasses import dataclass
 
 from scpy.action.action import Action
-from scpy.assignment.assignment import Assignment
 from scpy.causal_setting.epistemic_causal_setting import EpistemicCausalSetting
 from scpy.formula.evaluable_formula import EvaluableFormula
-from scpy.function.function import Function
-from scpy.literal.literal import Literal
+from scpy.primitives import Function, Literal, Assignment
 from scpy.situation.epistemic_situation import EpistemicSituation
 from scpy.situation.situation import Situation
 from scpy.state.state import State

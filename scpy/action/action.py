@@ -1,5 +1,5 @@
 from typing import TypeAlias
 
-from scpy.function.function import Function
+from scpy.primitives import Function
 
 Action: TypeAlias = Function

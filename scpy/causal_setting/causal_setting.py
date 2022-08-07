@@ -6,7 +6,7 @@ from pydantic.dataclasses import dataclass
 
 from scpy.action.action import Action
 from scpy.agent.agent import Agent
-from scpy.predicate.predicate import Predicate
+from scpy.primitives import Predicate
 from scpy.situation.situation import Situation
 from scpy.state.state import State
 
