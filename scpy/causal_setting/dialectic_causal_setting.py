@@ -67,7 +67,8 @@ class DialecticCausalSetting(CausalSetting):
             raise ValueError(f"Unknown Action {action}. Position must be a Literal.")
         if argument not in self.argument_scheme:
             raise ValueError(f"Unknown Action {action}. Argument not in argument scheme.")
-        if not (position in incomplete and not incomplete[position]) and not any(position in preds for pos, preds in incomplete.items()):
+        if not (position in incomplete and not incomplete[position]) and not any(
+                position in preds for pos, preds in incomplete.items()):
             raise ValueError(f"Unknown Action {action}. Position does not need support.")
 
         state_ = set(state)
