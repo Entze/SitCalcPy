@@ -41,6 +41,12 @@ argument_necc_p_compl_money_comply_buy_p = Predicate('argument', (necc_p_compl_m
 argument_necc_p_compl_money_compl_buy_l = Literal(argument_necc_p_compl_money_comply_buy_p)
 supports_necc_p_compl_money_compl_buy_compl_buy = Function('supports', (necc_p_compl_money_compl_buy, -buy_l))
 
+fact_compl_money = Function('fact', (-money_l,))
+
+supports_fact_compl_money_compl_money = Function('supports', (fact_compl_money, -money_l))
+argument_fact_compl_money_p = Predicate('argument', (fact_compl_money,))
+argument_fact_compl_money_l = Literal(argument_fact_compl_money_p)
+
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
