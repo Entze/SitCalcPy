@@ -6,13 +6,16 @@ from frozendict import frozendict
 from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting
 from scpy.situation.situation import Situation
 from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l, money_p, buy_p, asks_p, \
-    need_p, position_need_l, position_need_f, position_need_compl_f, position_need_compl_l, fact_need, \
-    supports_fact_need_need, argument_fact_need_l, money_l
+    need_p, position_need_l, position_need_f, position_compl_need_f, position_compl_need_l, fact_need, \
+    supports_fact_need_need, argument_fact_need_l, money_l, position_compl_buy_f, position_compl_buy_l, buy_l, \
+    necc_p_compl_money_compl_buy, supports_necc_p_compl_money_compl_buy_compl_buy, \
+    argument_necc_p_compl_money_compl_buy_l
 
 fact_set = frozenset({need_l, -money_l})
 awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
 argument_scheme = frozendict({
-    fact_need: (frozenset(), frozenset({need_l}))
+    fact_need: (frozenset(), frozenset({need_l})),
+    necc_p_compl_money_compl_buy: (frozenset({-money_l}), frozenset({-buy_l}))
 })
 s0 = Situation(frozenset())
 
@@ -28,7 +31,7 @@ class TestConstructor(unittest.TestCase):
 
 class TestDo(unittest.TestCase):
 
-    def test_simple_initial_do_need(self):
+    def test_milk_simple_initial_do_need(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set)
 
@@ -39,17 +42,41 @@ class TestDo(unittest.TestCase):
 
         self.assertSetEqual(expected, actual)
 
-    def test_simple_initial_do_need_compl(self):
+    def test_milk_initial_compl_buy(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set)
-        s1 = t.do(position_need_compl_f, s0)
 
-        expected = {position_need_compl_l}
+        s1 = t.do(position_compl_buy_f, s0)
+
+        expected = {position_compl_buy_l}
         actual = set(s1.state)
 
         self.assertSetEqual(expected, actual)
 
-    def test_simple_supports_fact_need_need(self):
+    def test_milk_simple_initial_do_compl_need(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set)
+        s1 = t.do(position_compl_need_f, s0)
+
+        expected = {position_compl_need_l}
+        actual = set(s1.state)
+
+        self.assertSetEqual(expected, actual)
+
+    def test_milk_supports_necc_p_compl_money_compl_buy_compl_buy(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme)
+
+        s1 = Situation(frozenset({position_compl_buy_l}))
+        s2 = t.do(supports_necc_p_compl_money_compl_buy_compl_buy, s1)
+
+        expected = {position_compl_buy_l, argument_necc_p_compl_money_compl_buy_l}
+        actual = set(s2.state)
+
+        self.assertSetEqual(expected, actual)
+
+    def test_milk_simple_supports_fact_need_need(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set,
                               argument_scheme=argument_scheme)
@@ -64,7 +91,7 @@ class TestDo(unittest.TestCase):
 
 class TestIncomplete(unittest.TestCase):
 
-    def test_simple_position_need(self):
+    def test_milk_simple_position_need(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set,
                               )
@@ -75,7 +102,18 @@ class TestIncomplete(unittest.TestCase):
 
         self.assertDictEqual(expected, actual)
 
-    def test_simple_complete(self):
+    def test_milk_position_compl_buy(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set)
+
+        s1 = Situation(frozenset({position_compl_buy_l}))
+
+        expected = {-buy_l: set()}
+        actual = t.incomplete(s1.state)
+
+        self.assertDictEqual(expected, actual)
+
+    def test_milk_simple_complete(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set,
                               )
@@ -85,3 +123,15 @@ class TestIncomplete(unittest.TestCase):
         actual = t.incomplete(s2.state)
 
         self.assertDictEqual(expected, actual)
+
+    def test_milk_argument_necc_p_compl_money_compl_buy_compl_buy(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme)
+        s2 = Situation(frozenset({position_compl_buy_l, argument_necc_p_compl_money_compl_buy_l}))
+
+        expected = {-buy_l: {-money_l}}
+        actual = t.incomplete(s2.state)
+        self.assertDictEqual(expected, actual)
+
+

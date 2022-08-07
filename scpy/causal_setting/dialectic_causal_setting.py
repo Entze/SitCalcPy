@@ -78,6 +78,8 @@ class DialecticCausalSetting(CausalSetting):
         state_.add(argument_lit)
         return frozenset(state_)
 
+    # def attacks(self, state: State) -> Mapping[Function, ]:
+
     def incomplete(self, state: State) -> Mapping[Literal, Collection[Literal]]:
         positions: Set[Literal] = set()
         facts: Set[Function] = set()
@@ -133,6 +135,9 @@ class DialecticCausalSetting(CausalSetting):
         incomplete = self.incomplete(state)
         if incomplete:
             return self.__do_argument(action, state, incomplete)
+        # attacks = self.attacks(state)
+        assert False
+        return state
 
     def poss(self, action: Action, situation: Situation) -> bool:
         return self.poss_state(action, situation.state)

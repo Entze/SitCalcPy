@@ -11,16 +11,13 @@ position_need_f = Function('position', (need_l,))
 position_need_p = Predicate('position', (need_l,))
 position_need_l = Literal(position_need_p)
 
-position_need_compl_f = Function('position', (-need_l,))
-position_need_compl_p = Predicate('position', (-need_l,))
-position_need_compl_l = Literal(position_need_compl_p)
+position_compl_need_f = Function('position', (-need_l,))
+position_compl_need_p = Predicate('position', (-need_l,))
+position_compl_need_l = Literal(position_compl_need_p)
 
 money_f = Function('money')
-money_compl = Function('compl', (money_f,))
-money_compl_p = Predicate('compl', (money_f,))
 money_p = Predicate('money')
 money_l = Literal(money_p)
-money_compl_l = Literal(money_compl_p)
 
 asks_f = Function('asks')
 asks_p = Predicate('asks')
@@ -30,10 +27,19 @@ buy_f = Function('buy')
 buy_p = Predicate('buy')
 buy_l = Literal(buy_p)
 
+position_compl_buy_f = Function('position', (-buy_l,))
+position_compl_buy_p = Predicate('position', (-buy_l,))
+position_compl_buy_l = Literal(position_compl_buy_p)
+
 fact_need = Function('fact', (need_l,))
 supports_fact_need_need = Function('supports', (fact_need, need_l))
 argument_fact_need_p = Predicate('argument', (fact_need,))
 argument_fact_need_l = Literal(argument_fact_need_p)
+
+necc_p_compl_money_compl_buy = Function('necc_p', (Function('cond_for', (-money_l, -buy_l)),))
+argument_necc_p_compl_money_comply_buy_p = Predicate('argument', (necc_p_compl_money_compl_buy,))
+argument_necc_p_compl_money_compl_buy_l = Literal(argument_necc_p_compl_money_comply_buy_p)
+supports_necc_p_compl_money_compl_buy_compl_buy = Function('supports', (necc_p_compl_money_compl_buy, -buy_l))
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
