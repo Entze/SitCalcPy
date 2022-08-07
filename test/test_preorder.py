@@ -1,8 +1,8 @@
 # noinspection DuplicatedCode
 import unittest
 
-from scpy.primitives import Function
 from scpy.preorder import MutablePreorder, Preorder
+from scpy.primitives import Function
 
 
 class TestConstructor(unittest.TestCase):

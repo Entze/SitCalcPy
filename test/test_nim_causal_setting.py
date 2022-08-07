@@ -3,8 +3,8 @@ import unittest
 
 from scpy.causal_setting.game_causal_setting import GameCausalSetting
 from scpy.causal_setting.nim_causal_setting import NimCausalSetting
-from scpy.primitives import Function, Literal
 from scpy.path.path import Path
+from scpy.primitives import Function, Literal
 from scpy.situation.situation import Situation
 
 

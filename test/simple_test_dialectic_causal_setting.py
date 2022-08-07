@@ -36,7 +36,6 @@ argument_fact_need_p = Predicate('argument', (fact_need,))
 argument_fact_need_l = Literal(argument_fact_need_p)
 
 
-
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
     pass

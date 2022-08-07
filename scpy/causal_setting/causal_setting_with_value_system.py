@@ -8,8 +8,8 @@ from scpy.action.action import Action
 from scpy.agent.agent import Agent
 from scpy.causal_setting.causal_setting import CausalSetting
 from scpy.dataclass_config import DataclassConfig
-from scpy.primitives import Function
 from scpy.preorder import Preorder
+from scpy.primitives import Function
 from scpy.situation.situation import Situation
 from scpy.state.state import State
 

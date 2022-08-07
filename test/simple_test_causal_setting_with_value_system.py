@@ -8,8 +8,8 @@ from scpy.action.action import Action
 from scpy.agent.agent import Agent
 from scpy.causal_setting.causal_setting_with_value_system import CausalSettingWithValueSystem
 from scpy.dataclass_config import DataclassConfig
-from scpy.primitives import Function, Literal, Predicate
 from scpy.preorder import MutablePreorder, Preorder
+from scpy.primitives import Function, Literal, Predicate
 from scpy.state.state import State
 
 mut_simple_value_system = MutablePreorder()

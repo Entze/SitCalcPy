@@ -1,7 +1,7 @@
 from typing import Sequence
 
-from scpy.primitives import Assignment
 from scpy.formula.palat_formula.palat_formula import PalatFormula
+from scpy.primitives import Assignment
 
 
 class PublicAssignmentPalatFormula(PalatFormula):

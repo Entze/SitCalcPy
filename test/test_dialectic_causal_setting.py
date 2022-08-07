@@ -5,16 +5,17 @@ from frozendict import frozendict
 
 from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting
 from scpy.situation.situation import Situation
-from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l, money_compl_l, money_p, buy_p, asks_p, \
-    need_p, need_f, position_need_l, position_need_f, position_need_compl_f, position_need_compl_l, fact_need, \
+from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l, money_p, buy_p, asks_p, \
+    need_p, position_need_l, position_need_f, position_need_compl_f, position_need_compl_l, fact_need, \
     supports_fact_need_need, argument_fact_need_l, money_l
 
 fact_set = frozenset({need_l, -money_l})
-awareness_set=frozenset({need_p, asks_p, buy_p, money_p})
-argument_scheme=frozendict({
+awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
+argument_scheme = frozendict({
     fact_need: (frozenset(), frozenset({need_l}))
 })
 s0 = Situation(frozenset())
+
 
 class TestConstructor(unittest.TestCase):
 
@@ -49,7 +50,6 @@ class TestDo(unittest.TestCase):
         self.assertSetEqual(expected, actual)
 
     def test_simple_supports_fact_need_need(self):
-
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set,
                               argument_scheme=argument_scheme)
@@ -85,4 +85,3 @@ class TestIncomplete(unittest.TestCase):
         actual = t.incomplete(s2.state)
 
         self.assertDictEqual(expected, actual)
-

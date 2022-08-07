@@ -6,8 +6,8 @@ from scpy.formula.negation_formula import EvaluableNegationFormula
 from scpy.formula.path_formula.next_path_formula import NextPathFormula
 from scpy.formula.path_formula.state_path_formula import StatePathFormula
 from scpy.formula.state_formula.predicate_state_formula import PredicateStateFormula
-from scpy.primitives import Literal, Predicate
 from scpy.path.path import Path
+from scpy.primitives import Literal, Predicate
 from scpy.situation.situation import Situation
 from test.simple_test_causal_setting import SimpleTestCausalSetting
 
