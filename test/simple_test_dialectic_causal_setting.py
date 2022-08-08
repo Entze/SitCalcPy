@@ -98,6 +98,29 @@ supports_hyp_compl_money_compl_money_f = Function('supports', (hyp_compl_money, 
 supports_hyp_compl_money_compl_money_p = Predicate('supports', (hyp_compl_money, -money_l))
 supports_hyp_compl_money_compl_money_l = Literal(supports_hyp_compl_money_compl_money_p)
 
+counterargument_suff_p_need_buy_buy_f = Function('counterargument', (suff_p_need_buy, buy_l))
+counterargument_suff_p_need_buy_buy_p = Predicate('counterargument', (suff_p_need_buy, buy_l))
+counterargument_suff_p_need_buy_buy_l = Literal(counterargument_suff_p_need_buy_buy_p)
+
+counterargument_fact_need_need_f = Function('counterargument', (fact_need, need_l))
+counterargument_fact_need_need_p = Predicate('counterargument', (fact_need, need_l))
+counterargument_fact_need_need_l = Literal(counterargument_fact_need_need_p)
+
+counterargument_necc_p_compl_money_compl_buy_compl_buy_f = Function('counterargument',
+                                                                    (necc_p_compl_money_compl_buy, -buy_l))
+counterargument_necc_p_compl_money_compl_buy_compl_buy_p = Predicate('counterargument',
+                                                                     (necc_p_compl_money_compl_buy, -buy_l))
+counterargument_necc_p_compl_money_compl_buy_compl_buy_l = Literal(
+    counterargument_necc_p_compl_money_compl_buy_compl_buy_p)
+
+counterargument_hyp_compl_money_compl_money_f = Function('counterargument', (hyp_compl_money, -money_l))
+counterargument_hyp_compl_money_compl_money_p = Predicate('counterargument', (hyp_compl_money, -money_l))
+counterargument_hyp_compl_money_compl_money_l = Literal(counterargument_hyp_compl_money_compl_money_p)
+
+argument_hyp_money_money_f = Function('argument', (hyp_money, money_l))
+argument_hyp_money_money_p = Predicate('argument', (hyp_money, money_l))
+argument_hyp_money_money_l = Literal(argument_hyp_money_money_p)
+
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):

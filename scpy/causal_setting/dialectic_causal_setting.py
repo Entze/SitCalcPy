@@ -1,4 +1,4 @@
-from typing import Tuple, Mapping, FrozenSet, Set, Collection, MutableMapping, Type, Sequence
+from typing import Tuple, Mapping, FrozenSet, Set, Collection, MutableMapping, Type, Sequence, Optional
 
 from frozendict import frozendict  # type: ignore
 from pydantic import Field
@@ -103,9 +103,7 @@ class DialecticCausalSetting(CausalSetting):
         state_.add(attack_lit)
         return frozenset(state_)
 
-    def __do_defense(self,
-                     action: Action,
-                     state: State,
+    def __do_defense(self, action: Action, state: State,
                      undefended_attacks: Mapping[Function, Collection[Literal]]) -> State:
         def_argument, def_position = self.__extract_argument_position(action, 'defends')
         if not any(self.strength_preorder.is_preceded(att_argument, def_argument) for att_argument in
@@ -117,6 +115,65 @@ class DialecticCausalSetting(CausalSetting):
         if -def_argument_lit in state_:
             state_.remove(-def_argument_lit)
         state_.add(def_argument_lit)
+        return frozenset(state_)
+
+    def __do_consolidate(self, state: State) -> State:
+        att:Optional[Literal] = None
+        attacks = set()
+        defends = set()
+        for literal in state:
+            if self.__is_well_formed(literal, 'attacks', Function, Literal):
+                lit = Literal(Predicate(literal.predicate.functor,
+                                        (literal.predicate.arguments[0], -literal.predicate.arguments[1])))
+                attacks.add(lit)
+                att = literal
+            elif self.__is_well_formed(literal, 'defends', Function, Literal):
+                defends.add(literal)
+        changed = True
+        while changed:
+            changed = False
+            for literal in state:
+                if self.__is_well_formed(literal, 'supports', Function, Literal):
+                    argument, position = literal.predicate.arguments
+                    assert isinstance(argument, Function)
+                    assert isinstance(position, Literal)
+                    if literal not in attacks:
+                        for attack in attacks:
+                            att_argument, _ = attack.predicate.arguments
+                            assert isinstance(argument, Function)
+                            preds, _ = self.argument_scheme[att_argument]
+                            if position in preds:
+                                changed = True
+                                attacks.add(literal)
+                                break
+                    if changed:
+                        break
+                    if literal not in defends:
+                        for defence in defends:
+                            def_argument, _ = defence.predicate.arguments
+                            assert isinstance(argument, Function)
+                            preds, _ = self.argument_scheme[def_argument]
+                            if position in preds:
+                                changed = True
+                                defends.add(literal)
+                                break
+
+        state_ = set(state)
+        for attack in attacks:
+            counterargument = Literal(Predicate('counterargument', attack.predicate.arguments))
+            if -counterargument in state_:
+                state_.remove(-counterargument)
+            state_.add(counterargument)
+
+        for defence in defends:
+            argument = Literal(Predicate('argument', defence.predicate.arguments))
+            if -argument in state_:
+                state_.remove(-argument)
+            state_.add(argument)
+        state_ -= (attacks | defends)
+        assert not attacks or att is not None
+        if att is not None:
+            state_.remove(att)
         return frozenset(state_)
 
     def __is_well_formed(self, literal: Literal, functor: str, *types: Type) -> bool:
@@ -180,8 +237,7 @@ class DialecticCausalSetting(CausalSetting):
                 assert isinstance(position, Literal)
                 attacks[position] = argument
             elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
-                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
-                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+                    self.__is_well_formed(literal, 'argument', Function, Literal):
                 argument, position = literal.predicate.arguments
                 assert isinstance(argument, Function)
                 assert isinstance(position, Literal)
@@ -195,6 +251,9 @@ class DialecticCausalSetting(CausalSetting):
                 incomplete_attacks[position] = argument
 
         return incomplete_attacks
+
+    def incomplete_defends(self, state: State) -> Mapping[Literal, Function]:
+        raise NotImplementedError
 
     def undefended_attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
         attacks: MutableMapping[Function, Set[Literal]] = {}
@@ -294,6 +353,8 @@ class DialecticCausalSetting(CausalSetting):
         undefended_attacks = self.undefended_attacks(state)
         if undefended_attacks:
             return self.__do_defense(action, state, undefended_attacks)
+        if DialecticCausalSetting.is_consolidate(action):
+            return self.__do_consolidate(state)
         attacks = self.attacks(state)
         if attacks:
             return self.__do_attack(action, state, attacks)
@@ -304,3 +365,11 @@ class DialecticCausalSetting(CausalSetting):
 
     def poss_state(self, action: Action, state: State) -> bool:
         pass
+
+    @staticmethod
+    def is_consolidate(action: Action) -> bool:
+        return action.symbol == 'consolidate' and not action.arguments
+
+    @staticmethod
+    def consolidate() -> Action:
+        return Function('consolidate')
