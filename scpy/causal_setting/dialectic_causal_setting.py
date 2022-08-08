@@ -189,10 +189,39 @@ class DialecticCausalSetting(CausalSetting):
 
         return incomplete_attacks
 
-    def undefended_attacks(self, state: State) -> Mapping[Literal, Function]:
+    def undefended_attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
+        attacks = {}
+        defends = {}
         for literal in state:
-            self.__is_well_formed(literal, 'attacks', Function, Literal)
-        raise NotImplementedError
+            if self.__is_well_formed(literal, 'attacks', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                attacks.setdefault(argument, set()).add(-position)
+            elif self.__is_well_formed(literal, 'supports', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                attacks.setdefault(argument, set()).add(position)
+            elif self.__is_well_formed(literal, 'defends', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                defends.setdefault(argument, set()).add(position)
+
+        defense_needed = False
+        defended = False
+        for att_argument, att_positions in attacks.items():
+            for def_argument, def_positions in defends.items():
+                if self.strength_preorder.is_strictly_preceded(def_argument, att_argument):
+                    defense_needed = True
+                if self.strength_preorder.is_strictly_preceded(att_argument, def_argument):
+                    defended = True
+
+        if defense_needed and not defended:
+            return attacks
+        return {}
 
     def incomplete_arguments(self, state: State) -> Mapping[Literal, Collection[Literal]]:
         positions: Set[Literal] = set()

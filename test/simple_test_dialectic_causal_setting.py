@@ -27,6 +27,9 @@ buy_f = Function('buy')
 buy_p = Predicate('buy')
 buy_l = Literal(buy_p)
 
+position_buy_f = Function('position', (buy_l,))
+position_buy_p = Predicate('position', (buy_l,))
+position_buy_l = Literal(position_buy_p)
 position_compl_buy_f = Function('position', (-buy_l,))
 position_compl_buy_p = Predicate('position', (-buy_l,))
 position_compl_buy_l = Literal(position_compl_buy_p)
@@ -45,7 +48,9 @@ supports_necc_p_compl_money_compl_buy_compl_buy = Function('supports', (necc_p_c
 
 fact_compl_money = Function('fact', (-money_l,))
 
-supports_fact_compl_money_compl_money = Function('supports', (fact_compl_money, -money_l))
+supports_fact_compl_money_compl_money_f = Function('supports', (fact_compl_money, -money_l))
+supports_fact_compl_money_compl_money_p = Predicate('supports', (fact_compl_money, -money_l))
+supports_fact_compl_money_compl_money_l = Literal(supports_fact_compl_money_compl_money_p)
 argument_fact_compl_money_p = Predicate('argument', (fact_compl_money, -money_l))
 argument_fact_compl_money_l = Literal(argument_fact_compl_money_p)
 
@@ -53,6 +58,8 @@ suff_p_need_buy = Function('suff_p', (Function('cond_for', (need_l, buy_l)),))
 hyp_need = Function('hyp', (need_l,))
 hyp_compl_need = Function('hyp', (-need_l,))
 
+fact_buy = Function('fact', (buy_l,))
+fact_compl_buy = Function('fact', (-buy_l,))
 hyp_buy = Function('hyp', (buy_l,))
 hyp_compl_buy = Function('hyp', (-buy_l,))
 
@@ -64,6 +71,17 @@ attacks_suff_p_need_buy_compl_buy_f = Function('attacks', (suff_p_need_buy, -buy
 attacks_suff_p_need_buy_compl_buy_p = Predicate('attacks', (suff_p_need_buy, -buy_l))
 attacks_suff_p_need_buy_compl_buy_l = Literal(attacks_suff_p_need_buy_compl_buy_p)
 
+supports_suff_p_need_buy_buy_f = Function('supports', (suff_p_need_buy, buy_l))
+supports_suff_p_need_buy_buy_p = Predicate('supports', (suff_p_need_buy, buy_l))
+supports_suff_p_need_buy_buy_l = Literal(supports_suff_p_need_buy_buy_p)
+
+argument_suff_p_need_buy_buy_f = Function('argument', (suff_p_need_buy, buy_l))
+argument_suff_p_need_buy_buy_p = Predicate('argument', (suff_p_need_buy, buy_l))
+argument_suff_p_need_buy_buy_l = Literal(argument_suff_p_need_buy_buy_p)
+
+attacks_necc_p_compl_money_comply_buy_buy_f = Function('attacks', (necc_p_compl_money_compl_buy, buy_l))
+attacks_necc_p_compl_money_comply_buy_buy_p = Predicate('attacks', (necc_p_compl_money_compl_buy, buy_l))
+attacks_necc_p_compl_money_compl_buy_buy_l = Literal(attacks_necc_p_compl_money_comply_buy_buy_p)
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
