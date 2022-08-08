@@ -127,7 +127,8 @@ class DialecticCausalSetting(CausalSetting):
             return False
         for i, argument in enumerate(literal.predicate.arguments):
             type_: Type = types_[i]
-            if not isinstance(argument, type_):  # type: ignore
+            # noinspection PyTypeHints
+            if not isinstance(argument, type_):
                 return False
         return True
 
@@ -196,8 +197,8 @@ class DialecticCausalSetting(CausalSetting):
         return incomplete_attacks
 
     def undefended_attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
-        attacks = {}
-        defends = {}
+        attacks: MutableMapping[Function, Set[Literal]] = {}
+        defends: MutableMapping[Function, Set[Literal]] = {}
         for literal in state:
             if self.__is_well_formed(literal, 'attacks', Function, Literal):
                 argument, position = literal.predicate.arguments
