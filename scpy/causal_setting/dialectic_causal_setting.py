@@ -237,7 +237,8 @@ class DialecticCausalSetting(CausalSetting):
                 assert isinstance(position, Literal)
                 attacks[position] = argument
             elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
-                    self.__is_well_formed(literal, 'argument', Function, Literal):
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
                 argument, position = literal.predicate.arguments
                 assert isinstance(argument, Function)
                 assert isinstance(position, Literal)
@@ -253,7 +254,30 @@ class DialecticCausalSetting(CausalSetting):
         return incomplete_attacks
 
     def incomplete_defends(self, state: State) -> Mapping[Literal, Function]:
-        raise NotImplementedError
+        defends: MutableMapping[Literal, Function] = {}
+        supports: MutableMapping[Literal, Function] = {}
+        for literal in state:
+            if self.__is_well_formed(literal, 'defends', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                defends[position] = argument
+            elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                supports[position] = argument
+
+        incomplete_defends: MutableMapping[Literal, Function] = {}
+
+        for position, argument in defends.items():
+            preds, _ = self.argument_scheme[argument]
+            if not all(pred in supports for pred in preds):
+                incomplete_defends[position] = argument
+
+        return incomplete_defends
 
     def undefended_attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
         attacks: MutableMapping[Function, Set[Literal]] = {}
@@ -348,6 +372,12 @@ class DialecticCausalSetting(CausalSetting):
         if incomplete_attacks:
             incomplete = {}
             for literal, argument in incomplete_attacks.items():
+                incomplete[literal] = self.unsupported_literals(state, argument)
+            return self.__do_reasoning(action, state, incomplete, 'supports')
+        incomplete_defends = self.incomplete_defends(state)
+        if incomplete_defends:
+            incomplete = {}
+            for literal, argument in incomplete_defends.items():
                 incomplete[literal] = self.unsupported_literals(state, argument)
             return self.__do_reasoning(action, state, incomplete, 'supports')
         undefended_attacks = self.undefended_attacks(state)
