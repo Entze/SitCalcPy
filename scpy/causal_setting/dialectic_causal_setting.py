@@ -140,8 +140,8 @@ class DialecticCausalSetting(CausalSetting):
                     self.__is_well_formed(literal, 'argument', Function, Literal) or \
                     self.__is_well_formed(literal, 'counterargument', Function, Literal):
                 arg, pos = literal.predicate.arguments
-                supported.add(poses)
-        return {pred for pred in preds if preds not in supported}
+                supported.add(pos)
+        return {pred for pred in preds if pred not in supported}
 
     def attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
         arguments = set()
