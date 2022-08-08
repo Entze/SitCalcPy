@@ -99,7 +99,6 @@ supports_hyp_compl_money_compl_money_p = Predicate('supports', (hyp_compl_money,
 supports_hyp_compl_money_compl_money_l = Literal(supports_hyp_compl_money_compl_money_p)
 
 
-
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
     pass
