@@ -33,6 +33,8 @@ position_compl_buy_l = Literal(position_compl_buy_p)
 
 fact_need = Function('fact', (need_l,))
 supports_fact_need_need = Function('supports', (fact_need, need_l))
+supports_fact_need_need_p = Predicate('supports', (fact_need, need_l))
+supports_fact_need_need_l = Literal(supports_fact_need_need_p)
 argument_fact_need_need_p = Predicate('argument', (fact_need, need_l))
 argument_fact_need_need_l = Literal(argument_fact_need_need_p)
 

@@ -12,7 +12,8 @@ from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l,
     argument_necc_p_compl_money_compl_buy_compl_buy_l, supports_fact_compl_money_compl_money, \
     argument_fact_compl_money_l, \
     fact_compl_money, suff_p_need_buy, hyp_need, hyp_compl_need, hyp_buy, hyp_compl_buy, attacks_hyp_buy_compl_buy_f, \
-    attacks_hyp_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_l
+    attacks_hyp_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_f, \
+    supports_fact_need_need_l
 
 fact_set = frozenset({need_l, -money_l})
 awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
@@ -125,6 +126,47 @@ class TestDo(unittest.TestCase):
             argument_fact_compl_money_l,
             attacks_hyp_buy_compl_buy_l}
         actual = set(s4.state)
+
+        self.assertSetEqual(expected, actual)
+
+    def test_milk_attacks_suff_p_need_buy_compl_buy(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme)
+        s3 = Situation(frozenset({
+            position_compl_buy_l,
+            argument_necc_p_compl_money_compl_buy_compl_buy_l,
+            argument_fact_compl_money_l}))
+        s4 = t.do(attacks_suff_p_need_buy_compl_buy_f, s3)
+
+        expected = {
+            position_compl_buy_l,
+            argument_necc_p_compl_money_compl_buy_compl_buy_l,
+            argument_fact_compl_money_l,
+            attacks_suff_p_need_buy_compl_buy_l}
+        actual = set(s4.state)
+
+        self.assertSetEqual(expected, actual)
+
+    def test_milk_supports_fact_need_need(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme)
+        s4 = Situation(frozenset({
+            position_compl_buy_l,
+            argument_necc_p_compl_money_compl_buy_compl_buy_l,
+            argument_fact_compl_money_l,
+            attacks_suff_p_need_buy_compl_buy_l}))
+        s5 = t.do(supports_fact_need_need, s4)
+
+        expected = {
+            position_compl_buy_l,
+            argument_necc_p_compl_money_compl_buy_compl_buy_l,
+            argument_fact_compl_money_l,
+            attacks_suff_p_need_buy_compl_buy_l,
+            supports_fact_need_need_l,
+        }
+        actual = set(s5.state)
 
         self.assertSetEqual(expected, actual)
 

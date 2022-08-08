@@ -91,7 +91,7 @@ class DialecticCausalSetting(CausalSetting):
         return frozenset(state_)
 
     def __do_attack(self, action: Action, state: State, attacks: Mapping[Function, Collection[Literal]]) -> State:
-        argument,position = self.__extract_argument_position(action, 'attacks')
+        argument, position = self.__extract_argument_position(action, 'attacks')
         if argument not in attacks:
             raise ValueError(f"Unknown action {action}. Does not attack argument.")
 
@@ -114,6 +114,17 @@ class DialecticCausalSetting(CausalSetting):
             if not isinstance(argument, type_):  # type: ignore
                 return False
         return True
+
+    def unsupported_literals(self, state: State, argument: Function) -> Collection[Literal]:
+        preds, poses = self.argument_scheme[argument]
+        supported = set()
+        for literal in state:
+            if self.__is_well_formed(literal, 'supports', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+                arg, pos = literal.predicate.arguments
+                supported.add(poses)
+        return {pred for pred in preds if preds not in supported}
 
     def attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
         arguments = set()
@@ -179,6 +190,8 @@ class DialecticCausalSetting(CausalSetting):
         return incomplete_attacks
 
     def undefended_attacks(self, state: State) -> Mapping[Literal, Function]:
+        for literal in state:
+            self.__is_well_formed(literal, 'attacks', Function, Literal)
         raise NotImplementedError
 
     def incomplete_arguments(self, state: State) -> Mapping[Literal, Collection[Literal]]:
@@ -235,9 +248,15 @@ class DialecticCausalSetting(CausalSetting):
             return self.__do_initial_state(action)
         incomplete_arguments = self.incomplete_arguments(state)
         if incomplete_arguments:
-            return self.__do_reasoning(action, state, incomplete_arguments)
+            return self.__do_reasoning(action, state, incomplete_arguments, 'argument')
         incomplete_attacks = self.incomplete_attacks(state)
         if incomplete_attacks:
+            incomplete = {}
+            for literal, argument in incomplete_attacks.items():
+                incomplete[literal] = self.unsupported_literals(state, argument)
+            return self.__do_reasoning(action, state, incomplete, 'supports')
+        undefended_attacks = self.undefended_attacks(state)
+        if undefended_attacks:
             pass
         attacks = self.attacks(state)
         if attacks:
