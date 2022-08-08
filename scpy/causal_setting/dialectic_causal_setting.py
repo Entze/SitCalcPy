@@ -55,27 +55,35 @@ class DialecticCausalSetting(CausalSetting):
         argument_lit = Literal(Predicate('position', (argument,)))
         return frozenset({argument_lit})
 
-    def __do_argument(self, action: Action, state: State, incomplete: Mapping[Literal, Collection[Literal]]) -> State:
-        if action.symbol != 'supports':
+    def __extract_argument_position(self, action: Action, symbol: str = 'supports') -> \
+            Tuple[Function, Literal]:
+        if action.symbol != symbol:
             raise ValueError(
-                f"Unknown Action {action}. In incomplete state Action has to be of form {Function('supports', (Function('Argument'), Function('Position')))}")
+                f"Unknown Action {action}. Action.symbol is {action.symbol} but should be {symbol}")
         if len(action.arguments) < 2:
             raise ValueError(
-                f"Unknown Action {action}. In incomplete state Action has to be of form {Function('supports', (Function('Argument'), Function('Position')))}")
+                f"Unknown Action {action}. Not enough arguments.")
         argument = action.arguments[0]
         position = action.arguments[1]
         if not isinstance(argument, Function):
-            raise ValueError(f"Unknown Action {action}. Argument must be a Function.")
+            raise ValueError(
+                f"Unknown Action {action}. Argument must be of type Function, but is type {type(argument).__name__}.")
         if not isinstance(position, Literal):
-            raise ValueError(f"Unknown Action {action}. Position must be a Literal.")
+            raise ValueError(
+                f"Unknown Action {action}. Position must be of type Literal, but is type {type(argument).__name__}.")
         if argument not in self.argument_scheme:
             raise ValueError(f"Unknown Action {action}. Argument not in argument scheme.")
+
+        return argument, position
+
+    def __do_reasoning(self, action: Action, state: State, incomplete: Mapping[Literal, Collection[Literal]],
+                       functor: str = 'argument') -> State:
+        argument, position = self.__extract_argument_position(action)
         if not (position in incomplete and not incomplete[position]) and not any(
                 position in preds for pos, preds in incomplete.items()):
             raise ValueError(f"Unknown Action {action}. Position does not need support.")
-
         state_ = set(state)
-        argument_pred = Predicate('argument', (argument, position))
+        argument_pred = Predicate(functor, (argument, position))
         argument_lit = Literal(argument_pred)
         if -argument_lit in state_:
             state_.remove(-argument_lit)
@@ -83,22 +91,7 @@ class DialecticCausalSetting(CausalSetting):
         return frozenset(state_)
 
     def __do_attack(self, action: Action, state: State, attacks: Mapping[Function, Collection[Literal]]) -> State:
-        if action.symbol != 'attacks':
-            raise ValueError(
-                f"Unknown action {action}. Attack has to be of form {Function('attacks', (Function('Argument'), Function('Position')))}")
-        if len(action.arguments) < 2:
-            raise ValueError(
-                f"Unknown action {action}. Attack has to be of form {Function('attacks', (Function('Argument'), Function('Position')))}")
-        argument = action.arguments[0]
-        if not isinstance(argument, Function):
-            raise ValueError(
-                f"Unknown action {action}. Argument has to be of type Function, but is {type(argument).__name__}."
-            )
-        position = action.arguments[1]
-        if not isinstance(position, Literal):
-            raise ValueError(
-                f"Unknown action {action}. Position has to be of type Literal, but is {type(position).__name__}."
-            )
+        argument,position = self.__extract_argument_position(action, 'attacks')
         if argument not in attacks:
             raise ValueError(f"Unknown action {action}. Does not attack argument.")
 
@@ -188,7 +181,7 @@ class DialecticCausalSetting(CausalSetting):
     def undefended_attacks(self, state: State) -> Mapping[Literal, Function]:
         raise NotImplementedError
 
-    def incomplete(self, state: State) -> Mapping[Literal, Collection[Literal]]:
+    def incomplete_arguments(self, state: State) -> Mapping[Literal, Collection[Literal]]:
         positions: Set[Literal] = set()
         facts: Set[Function] = set()
         hypotheses: Set[Function] = set()
@@ -240,9 +233,12 @@ class DialecticCausalSetting(CausalSetting):
     def do_state(self, action: Action, state: State) -> State:
         if not state:
             return self.__do_initial_state(action)
-        incomplete = self.incomplete(state)
-        if incomplete:
-            return self.__do_argument(action, state, incomplete)
+        incomplete_arguments = self.incomplete_arguments(state)
+        if incomplete_arguments:
+            return self.__do_reasoning(action, state, incomplete_arguments)
+        incomplete_attacks = self.incomplete_attacks(state)
+        if incomplete_attacks:
+            pass
         attacks = self.attacks(state)
         if attacks:
             return self.__do_attack(action, state, attacks)

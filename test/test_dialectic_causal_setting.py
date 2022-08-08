@@ -12,7 +12,7 @@ from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l,
     argument_necc_p_compl_money_compl_buy_compl_buy_l, supports_fact_compl_money_compl_money, \
     argument_fact_compl_money_l, \
     fact_compl_money, suff_p_need_buy, hyp_need, hyp_compl_need, hyp_buy, hyp_compl_buy, attacks_hyp_buy_compl_buy_f, \
-    attacks_hyp_buy_compl_buy_l
+    attacks_hyp_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_l
 
 fact_set = frozenset({need_l, -money_l})
 awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
@@ -138,7 +138,7 @@ class TestIncomplete(unittest.TestCase):
         s1 = Situation(frozenset({position_need_l}))
 
         expected = {need_l: set()}
-        actual = t.incomplete(s1.state)
+        actual = t.incomplete_arguments(s1.state)
 
         self.assertDictEqual(expected, actual)
 
@@ -149,7 +149,7 @@ class TestIncomplete(unittest.TestCase):
         s1 = Situation(frozenset({position_compl_buy_l}))
 
         expected = {-buy_l: set()}
-        actual = t.incomplete(s1.state)
+        actual = t.incomplete_arguments(s1.state)
 
         self.assertDictEqual(expected, actual)
 
@@ -160,7 +160,7 @@ class TestIncomplete(unittest.TestCase):
         s2 = Situation(frozenset({position_need_l, argument_fact_need_need_l}))
 
         expected = {}
-        actual = t.incomplete(s2.state)
+        actual = t.incomplete_arguments(s2.state)
 
         self.assertDictEqual(expected, actual)
 
@@ -171,7 +171,7 @@ class TestIncomplete(unittest.TestCase):
         s2 = Situation(frozenset({position_compl_buy_l, argument_necc_p_compl_money_compl_buy_compl_buy_l}))
 
         expected = {-buy_l: {-money_l}}
-        actual = t.incomplete(s2.state)
+        actual = t.incomplete_arguments(s2.state)
         self.assertDictEqual(expected, actual)
 
     def test_milk_complete(self):
@@ -184,7 +184,7 @@ class TestIncomplete(unittest.TestCase):
                 {position_compl_buy_l, argument_necc_p_compl_money_compl_buy_compl_buy_l, argument_fact_compl_money_l}))
 
         expected = {}
-        actual = t.incomplete(s3.state)
+        actual = t.incomplete_arguments(s3.state)
 
         self.assertDictEqual(expected, actual)
 
@@ -231,6 +231,21 @@ class TestIncompleteAttacks(unittest.TestCase):
             attacks_hyp_buy_compl_buy_l}))
 
         expected = {}
+        actual = t.incomplete_attacks(s4.state)
+
+        self.assertDictEqual(expected, actual)
+
+    def test_milk_incomplete_attacks(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme)
+        s4 = Situation(frozenset({
+            position_compl_buy_l,
+            argument_necc_p_compl_money_compl_buy_compl_buy_l,
+            argument_fact_compl_money_l,
+            attacks_suff_p_need_buy_compl_buy_l}))
+
+        expected = {-buy_l: suff_p_need_buy}
         actual = t.incomplete_attacks(s4.state)
 
         self.assertDictEqual(expected, actual)

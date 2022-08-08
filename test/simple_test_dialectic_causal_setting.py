@@ -58,6 +58,10 @@ attacks_hyp_buy_compl_buy_f = Function('attacks', (hyp_buy, -buy_l))
 attacks_hyp_buy_compl_buy_p = Predicate('attacks', (hyp_buy, -buy_l))
 attacks_hyp_buy_compl_buy_l = Literal(attacks_hyp_buy_compl_buy_p)
 
+attacks_suff_p_need_buy_compl_buy_f = Function('attacks', (suff_p_need_buy, -buy_l))
+attacks_suff_p_need_buy_compl_buy_p = Predicate('attacks', (suff_p_need_buy, -buy_l))
+attacks_suff_p_need_buy_compl_buy_l = Literal(attacks_suff_p_need_buy_compl_buy_p)
+
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
