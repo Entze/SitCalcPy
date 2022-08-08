@@ -118,13 +118,16 @@ class DialecticCausalSetting(CausalSetting):
         return frozenset(state_)
 
     def __do_consolidate(self, state: State) -> State:
-        att:Optional[Literal] = None
+        att: Optional[Literal] = None
         attacks = set()
         defends = set()
         for literal in state:
             if self.__is_well_formed(literal, 'attacks', Function, Literal):
-                lit = Literal(Predicate(literal.predicate.functor,
-                                        (literal.predicate.arguments[0], -literal.predicate.arguments[1])))
+                functor = literal.predicate.functor
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                lit = Literal(Predicate(functor, (argument, -position)))
                 attacks.add(lit)
                 att = literal
             elif self.__is_well_formed(literal, 'defends', Function, Literal):
@@ -140,7 +143,7 @@ class DialecticCausalSetting(CausalSetting):
                     if literal not in attacks:
                         for attack in attacks:
                             att_argument, _ = attack.predicate.arguments
-                            assert isinstance(argument, Function)
+                            assert isinstance(att_argument, Function)
                             preds, _ = self.argument_scheme[att_argument]
                             if position in preds:
                                 changed = True
@@ -151,7 +154,7 @@ class DialecticCausalSetting(CausalSetting):
                     if literal not in defends:
                         for defence in defends:
                             def_argument, _ = defence.predicate.arguments
-                            assert isinstance(argument, Function)
+                            assert isinstance(def_argument, Function)
                             preds, _ = self.argument_scheme[def_argument]
                             if position in preds:
                                 changed = True
