@@ -1,4 +1,4 @@
-from typing import Tuple, Mapping, FrozenSet, Set, Collection, MutableMapping
+from typing import Tuple, Mapping, FrozenSet, Set, Collection, MutableMapping, Type, Sequence
 
 from frozendict import frozendict  # type: ignore
 from pydantic import Field
@@ -10,8 +10,10 @@ from scpy.causal_setting.causal_setting import CausalSetting
 from scpy.dataclass_config import DataclassConfig
 from scpy.preorder import Preorder
 from scpy.primitives import Function, Literal, Predicate
+from scpy.relation import Relation
 from scpy.situation.situation import Situation
 from scpy.state.state import State
+from scpy.util import from_function_to_predicate
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
@@ -20,6 +22,7 @@ class DialecticCausalSetting(CausalSetting):
     awareness_set: FrozenSet[Predicate] = Field(default_factory=frozenset)
     argument_scheme: Mapping[Function, Tuple[FrozenSet[Literal], FrozenSet[Literal]]] = Field(
         default_factory=frozendict)
+    conflict_relation: Relation = Field(default_factory=Relation)
     strength_preorder: Preorder = Field(default_factory=Preorder)
     fluents: FrozenSet[Predicate] = Field(init=False, repr=False, default_factory=frozenset)
     actions: FrozenSet[Action] = Field(init=False, repr=False, default_factory=frozenset)
@@ -72,14 +75,118 @@ class DialecticCausalSetting(CausalSetting):
             raise ValueError(f"Unknown Action {action}. Position does not need support.")
 
         state_ = set(state)
-        argument_pred = Predicate('argument', (argument,))
+        argument_pred = Predicate('argument', (argument, position))
         argument_lit = Literal(argument_pred)
         if -argument_lit in state_:
             state_.remove(-argument_lit)
         state_.add(argument_lit)
         return frozenset(state_)
 
-    # def attacks(self, state: State) -> Mapping[Function, ]:
+    def __do_attack(self, action: Action, state: State, attacks: Mapping[Function, Collection[Literal]]) -> State:
+        if action.symbol != 'attacks':
+            raise ValueError(
+                f"Unknown action {action}. Attack has to be of form {Function('attacks', (Function('Argument'), Function('Position')))}")
+        if len(action.arguments) < 2:
+            raise ValueError(
+                f"Unknown action {action}. Attack has to be of form {Function('attacks', (Function('Argument'), Function('Position')))}")
+        argument = action.arguments[0]
+        if not isinstance(argument, Function):
+            raise ValueError(
+                f"Unknown action {action}. Argument has to be of type Function, but is {type(argument).__name__}."
+            )
+        position = action.arguments[1]
+        if not isinstance(position, Literal):
+            raise ValueError(
+                f"Unknown action {action}. Position has to be of type Literal, but is {type(position).__name__}."
+            )
+        if argument not in attacks:
+            raise ValueError(f"Unknown action {action}. Does not attack argument.")
+
+        attack_pred = from_function_to_predicate(action)
+        attack_lit = Literal(attack_pred)
+        state_ = set(state)
+        if -attack_lit in state:
+            state_.remove(-attack_lit)
+        state_.add(attack_lit)
+        return frozenset(state_)
+
+    def __is_well_formed(self, literal: Literal, functor: str, *types: Type) -> bool:
+        if literal.predicate.functor != functor:
+            return False
+        types_: Sequence[Type] = tuple(types)
+        if len(types_) < len(literal.predicate.arguments):
+            return False
+        for i, argument in enumerate(literal.predicate.arguments):
+            type_: Type = types_[i]
+            if not isinstance(argument, type_):  # type: ignore
+                return False
+        return True
+
+    def attacks(self, state: State) -> Mapping[Function, Collection[Literal]]:
+        arguments = set()
+        counterarguments = set()
+        for literal in state:
+            if literal.predicate.functor == 'argument':
+                if len(literal.predicate.arguments) < 2:
+                    continue
+                argument = literal.predicate.arguments[0]
+                if not isinstance(argument, Function):
+                    continue
+                position = literal.predicate.arguments[1]
+                if not isinstance(position, Literal):
+                    continue
+                arguments.add((argument, position))
+            elif literal.predicate.functor == 'attacks':
+                if len(literal.predicate.arguments) < 2:
+                    continue
+                argument = literal.predicate.arguments[0]
+                if not isinstance(argument, Function):
+                    continue
+                position = literal.predicate.arguments[1]
+                if not isinstance(position, Literal):
+                    continue
+                counterarguments.add((argument, position))
+        attacks: MutableMapping[Function, Set[Literal]] = {}
+        for (argument, position) in arguments:
+            attacks_ = {counterargument for counterargument in self.conflict_relation[argument]
+                        if (counterargument, -position) not in counterarguments}
+
+            attacks_ |= {counterargument for (counterargument, (preds, poses)) in self.argument_scheme.items()
+                         if -position in poses}
+
+            for attack in attacks_:
+                attacks.setdefault(attack, set()).add(position)
+
+        return attacks
+
+    def incomplete_attacks(self, state: State) -> Mapping[Literal, Function]:
+        attacks: MutableMapping[Literal, Function] = {}
+        supports: MutableMapping[Literal, Function] = {}
+        for literal in state:
+            if self.__is_well_formed(literal, 'attacks', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                attacks[position] = argument
+            elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
+                supports[position] = argument
+
+        incomplete_attacks: MutableMapping[Literal, Function] = {}
+
+        for position, argument in attacks.items():
+            preds, _ = self.argument_scheme[argument]
+            if not all(pred in supports for pred in preds):
+                incomplete_attacks[position] = argument
+
+        return incomplete_attacks
+
+    def undefended_attacks(self, state: State) -> Mapping[Literal, Function]:
+        raise NotImplementedError
 
     def incomplete(self, state: State) -> Mapping[Literal, Collection[Literal]]:
         positions: Set[Literal] = set()
@@ -136,8 +243,9 @@ class DialecticCausalSetting(CausalSetting):
         incomplete = self.incomplete(state)
         if incomplete:
             return self.__do_argument(action, state, incomplete)
-        # attacks = self.attacks(state)
-        assert False
+        attacks = self.attacks(state)
+        if attacks:
+            return self.__do_attack(action, state, attacks)
         return state
 
     def poss(self, action: Action, situation: Situation) -> bool:

@@ -1,4 +1,4 @@
-from typing import Optional, TypeAlias, Mapping, Collection, MutableMapping, Set
+from typing import Optional, TypeAlias, Mapping, Collection, MutableMapping, Set, Iterable
 
 from frozendict import frozendict  # type: ignore
 
@@ -21,8 +21,12 @@ class Relation:
     def __str__(self) -> str:
         return f"{'{'}{', '.join(f'{key}<>{value}' for key, values in self._relation.items() for value in values)}{'}'}"
 
+    def __getitem__(self, item) -> Iterable[Function]:
+        return self._relation.get(item, ())
+
     def is_related(self, left: Function, right: Function) -> bool:
         return right in self._relation.get(left, ())
+
 
 
 class MutableRelation(Relation):

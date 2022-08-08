@@ -33,19 +33,30 @@ position_compl_buy_l = Literal(position_compl_buy_p)
 
 fact_need = Function('fact', (need_l,))
 supports_fact_need_need = Function('supports', (fact_need, need_l))
-argument_fact_need_p = Predicate('argument', (fact_need,))
-argument_fact_need_l = Literal(argument_fact_need_p)
+argument_fact_need_need_p = Predicate('argument', (fact_need, need_l))
+argument_fact_need_need_l = Literal(argument_fact_need_need_p)
 
 necc_p_compl_money_compl_buy = Function('necc_p', (Function('cond_for', (-money_l, -buy_l)),))
-argument_necc_p_compl_money_comply_buy_p = Predicate('argument', (necc_p_compl_money_compl_buy,))
-argument_necc_p_compl_money_compl_buy_l = Literal(argument_necc_p_compl_money_comply_buy_p)
+argument_necc_p_compl_money_comply_buy_compl_buy_p = Predicate('argument', (necc_p_compl_money_compl_buy, -buy_l))
+argument_necc_p_compl_money_compl_buy_compl_buy_l = Literal(argument_necc_p_compl_money_comply_buy_compl_buy_p)
 supports_necc_p_compl_money_compl_buy_compl_buy = Function('supports', (necc_p_compl_money_compl_buy, -buy_l))
 
 fact_compl_money = Function('fact', (-money_l,))
 
 supports_fact_compl_money_compl_money = Function('supports', (fact_compl_money, -money_l))
-argument_fact_compl_money_p = Predicate('argument', (fact_compl_money,))
+argument_fact_compl_money_p = Predicate('argument', (fact_compl_money, -money_l))
 argument_fact_compl_money_l = Literal(argument_fact_compl_money_p)
+
+suff_p_need_buy = Function('suff_p', (Function('cond_for', (need_l, buy_l)),))
+hyp_need = Function('hyp', (need_l,))
+hyp_compl_need = Function('hyp', (-need_l,))
+
+hyp_buy = Function('hyp', (buy_l,))
+hyp_compl_buy = Function('hyp', (-buy_l,))
+
+attacks_hyp_buy_compl_buy_f = Function('attacks', (hyp_buy, -buy_l))
+attacks_hyp_buy_compl_buy_p = Predicate('attacks', (hyp_buy, -buy_l))
+attacks_hyp_buy_compl_buy_l = Literal(attacks_hyp_buy_compl_buy_p)
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
