@@ -16,7 +16,9 @@ from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l,
     attacks_hyp_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_l, attacks_suff_p_need_buy_compl_buy_f, \
     supports_fact_need_need_l, fact_compl_buy, fact_buy, position_buy_f, position_buy_l, supports_suff_p_need_buy_buy_f, \
     argument_suff_p_need_buy_buy_l, attacks_necc_p_compl_money_comply_buy_buy_f, \
-    attacks_necc_p_compl_money_compl_buy_buy_l, supports_fact_compl_money_compl_money_l
+    attacks_necc_p_compl_money_compl_buy_buy_l, supports_fact_compl_money_compl_money_l, defends_hyp_money_money_f, \
+    defends_hyp_money_money_l, hyp_money, hyp_compl_money, supports_hyp_compl_money_compl_money_l, \
+    supports_hyp_compl_money_compl_money_f
 
 fact_set = frozenset({need_l, -money_l})
 awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
@@ -27,6 +29,8 @@ argument_scheme = frozendict({
     hyp_compl_need: (frozenset(), frozenset({-need_l})),
     hyp_buy: (frozenset(), frozenset({buy_l})),
     hyp_compl_buy: (frozenset(), frozenset({-buy_l})),
+    hyp_money: (frozenset(), frozenset({money_l})),
+    hyp_compl_money: (frozenset(), frozenset({-money_l})),
     necc_p_compl_money_compl_buy: (frozenset({-money_l}), frozenset({-buy_l})),
     suff_p_need_buy: (frozenset({need_l}), frozenset({buy_l})),
 })
@@ -37,6 +41,10 @@ strength_preorder_.precedes(suff_p_need_buy, fact_buy)
 strength_preorder_.precedes(suff_p_need_buy, fact_compl_buy)
 strength_preorder_.precedes(hyp_buy, fact_compl_buy)
 strength_preorder_.precedes(hyp_compl_buy, fact_buy)
+strength_preorder_.precedes(hyp_buy, hyp_money)
+strength_preorder_.precedes(hyp_money, hyp_buy)
+strength_preorder_.precedes(hyp_money, hyp_compl_money)
+strength_preorder_.precedes(hyp_compl_money, hyp_money)
 strength_preorder = Preorder(strength_preorder_)
 s0 = Situation(frozenset())
 
@@ -222,18 +230,19 @@ class TestDo(unittest.TestCase):
     def test_milk_alt_supports_fact_compl_money_compl_money(self):
         t = MilkCausalSetting(fact_set=fact_set,
                               awareness_set=awareness_set,
-                              argument_scheme=argument_scheme)
+                              argument_scheme=argument_scheme,
+                              strength_preorder=strength_preorder)
         s4 = Situation(frozenset({position_buy_l,
                                   argument_suff_p_need_buy_buy_l,
                                   argument_fact_need_need_l,
                                   attacks_necc_p_compl_money_compl_buy_buy_l}))
-        s5 = t.do(supports_fact_compl_money_compl_money_f, s4)
+        s5 = t.do(supports_hyp_compl_money_compl_money_f, s4)
 
         expected = {position_buy_l,
                     argument_suff_p_need_buy_buy_l,
                     argument_fact_need_need_l,
                     attacks_necc_p_compl_money_compl_buy_buy_l,
-                    supports_fact_compl_money_compl_money_l}
+                    supports_hyp_compl_money_compl_money_l}
         actual = set(s5.state)
 
         self.assertSetEqual(expected, actual)
@@ -257,6 +266,29 @@ class TestDo(unittest.TestCase):
             supports_fact_need_need_l,
         }
         actual = set(s5.state)
+
+        self.assertSetEqual(expected, actual)
+
+    def test_milk_alt_defends_hyp_money_money(self):
+        t = MilkCausalSetting(fact_set=fact_set,
+                              awareness_set=awareness_set,
+                              argument_scheme=argument_scheme,
+                              strength_preorder=strength_preorder)
+
+        s5 = Situation(frozenset({position_buy_l,
+                                  argument_suff_p_need_buy_buy_l,
+                                  argument_fact_need_need_l,
+                                  attacks_necc_p_compl_money_compl_buy_buy_l,
+                                  supports_hyp_compl_money_compl_money_l}))
+        s6 = t.do(defends_hyp_money_money_f, s5)
+
+        expected = {position_buy_l,
+                    argument_suff_p_need_buy_buy_l,
+                    argument_fact_need_need_l,
+                    attacks_necc_p_compl_money_compl_buy_buy_l,
+                    supports_hyp_compl_money_compl_money_l,
+                    defends_hyp_money_money_l}
+        actual = set(s6.state)
 
         self.assertSetEqual(expected, actual)
 
@@ -346,7 +378,8 @@ class TestAttacks(unittest.TestCase):
             argument_fact_compl_money_l}))
 
         expected = {suff_p_need_buy: {-buy_l},
-                    hyp_buy: {-buy_l}}
+                    hyp_buy: {-buy_l},
+                    hyp_money: {-money_l}}
         actual = t.attacks(s3.state)
 
         self.assertDictEqual(expected, actual)

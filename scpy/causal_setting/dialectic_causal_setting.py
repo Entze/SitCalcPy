@@ -103,6 +103,22 @@ class DialecticCausalSetting(CausalSetting):
         state_.add(attack_lit)
         return frozenset(state_)
 
+    def __do_defense(self,
+                     action: Action,
+                     state: State,
+                     undefended_attacks: Mapping[Function, Collection[Literal]]) -> State:
+        def_argument, def_position = self.__extract_argument_position(action, 'defends')
+        if not any(self.strength_preorder.is_preceded(att_argument, def_argument) for att_argument in
+                   undefended_attacks):
+            raise ValueError(f"Unknown Action {action}. Defense is not stronger than attack.")
+        state_ = set(state)
+        def_argument_pred = from_function_to_predicate(action)
+        def_argument_lit = Literal(def_argument_pred)
+        if -def_argument_lit in state_:
+            state_.remove(-def_argument_lit)
+        state_.add(def_argument_lit)
+        return frozenset(state_)
+
     def __is_well_formed(self, literal: Literal, functor: str, *types: Type) -> bool:
         if literal.predicate.functor != functor:
             return False
@@ -130,25 +146,15 @@ class DialecticCausalSetting(CausalSetting):
         arguments = set()
         counterarguments = set()
         for literal in state:
-            if literal.predicate.functor == 'argument':
-                if len(literal.predicate.arguments) < 2:
-                    continue
-                argument = literal.predicate.arguments[0]
-                if not isinstance(argument, Function):
-                    continue
-                position = literal.predicate.arguments[1]
-                if not isinstance(position, Literal):
-                    continue
+            if self.__is_well_formed(literal, 'argument', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
                 arguments.add((argument, position))
-            elif literal.predicate.functor == 'attacks':
-                if len(literal.predicate.arguments) < 2:
-                    continue
-                argument = literal.predicate.arguments[0]
-                if not isinstance(argument, Function):
-                    continue
-                position = literal.predicate.arguments[1]
-                if not isinstance(position, Literal):
-                    continue
+            elif self.__is_well_formed(literal, 'attacks', Function, Literal):
+                argument, position = literal.predicate.arguments
+                assert isinstance(argument, Function)
+                assert isinstance(position, Literal)
                 counterarguments.add((argument, position))
         attacks: MutableMapping[Function, Set[Literal]] = {}
         for (argument, position) in arguments:
@@ -286,7 +292,7 @@ class DialecticCausalSetting(CausalSetting):
             return self.__do_reasoning(action, state, incomplete, 'supports')
         undefended_attacks = self.undefended_attacks(state)
         if undefended_attacks:
-            pass
+            return self.__do_defense(action, state, undefended_attacks)
         attacks = self.attacks(state)
         if attacks:
             return self.__do_attack(action, state, attacks)

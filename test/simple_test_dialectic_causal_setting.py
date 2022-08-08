@@ -83,6 +83,23 @@ attacks_necc_p_compl_money_comply_buy_buy_f = Function('attacks', (necc_p_compl_
 attacks_necc_p_compl_money_comply_buy_buy_p = Predicate('attacks', (necc_p_compl_money_compl_buy, buy_l))
 attacks_necc_p_compl_money_compl_buy_buy_l = Literal(attacks_necc_p_compl_money_comply_buy_buy_p)
 
+hyp_money = Function('hyp', (money_l,))
+hyp_compl_money = Function('hyp', (-money_l,))
+
+defends_hyp_money_money_f = Function('defends', (hyp_money, money_l))
+defends_hyp_money_money_p = Predicate('defends', (hyp_money, money_l))
+defends_hyp_money_money_l = Literal(defends_hyp_money_money_p)
+
+supports_hyp_money_money_f = Function('supports', (hyp_money, money_l))
+supports_hyp_money_money_p = Predicate('supports', (hyp_money, money_l))
+supports_hyp_money_money_l = Literal(supports_hyp_money_money_p)
+
+supports_hyp_compl_money_compl_money_f = Function('supports', (hyp_compl_money, -money_l))
+supports_hyp_compl_money_compl_money_p = Predicate('supports', (hyp_compl_money, -money_l))
+supports_hyp_compl_money_compl_money_l = Literal(supports_hyp_compl_money_compl_money_p)
+
+
+
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
     pass
