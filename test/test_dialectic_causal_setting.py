@@ -3,7 +3,7 @@ import unittest
 
 from frozendict import frozendict
 
-from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting
+from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting, consolidate_action
 from scpy.preorder import MutablePreorder, Preorder
 from scpy.situation.situation import Situation
 from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l, money_p, buy_p, asks_p, \
@@ -300,7 +300,7 @@ class TestDo(unittest.TestCase):
                               argument_scheme=argument_scheme)
 
         s2 = Situation(frozenset({position_need_l, argument_fact_need_need_l}))
-        s3 = t.do(DialecticCausalSetting.consolidate(), s2)
+        s3 = t.do(consolidate_action(), s2)
 
         expected = {position_need_l, argument_fact_need_need_l}
         actual = set(s3.state)
@@ -319,7 +319,7 @@ class TestDo(unittest.TestCase):
             attacks_suff_p_need_buy_compl_buy_l,
             supports_fact_need_need_l,
         }))
-        s6 = t.do(DialecticCausalSetting.consolidate(), s5)
+        s6 = t.do(consolidate_action(), s5)
 
         expected = {
             position_compl_buy_l,
@@ -343,7 +343,7 @@ class TestDo(unittest.TestCase):
                                   attacks_necc_p_compl_money_compl_buy_buy_l,
                                   supports_hyp_compl_money_compl_money_l,
                                   defends_hyp_money_money_l}))
-        s7 = t.do(DialecticCausalSetting.consolidate(), s6)
+        s7 = t.do(consolidate_action(), s6)
 
         expected = {position_buy_l,
                     argument_suff_p_need_buy_buy_l,
@@ -462,7 +462,7 @@ class TestIncompleteAttacks(unittest.TestCase):
             attacks_hyp_buy_compl_buy_l}))
 
         expected = {}
-        actual = t.incomplete_attacks(s4.state)
+        actual = t.incomplete_reasoning(s4.state)
 
         self.assertDictEqual(expected, actual)
 
@@ -477,7 +477,7 @@ class TestIncompleteAttacks(unittest.TestCase):
             attacks_suff_p_need_buy_compl_buy_l}))
 
         expected = {-buy_l: suff_p_need_buy}
-        actual = t.incomplete_attacks(s4.state)
+        actual = t.incomplete_reasoning(s4.state)
 
         self.assertDictEqual(expected, actual)
 
