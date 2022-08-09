@@ -150,7 +150,7 @@ class DialecticCausalSetting(CausalSetting):
                      undefended_attacks: Mapping[Function, Collection[Literal]]) -> State:
         def_argument, def_position = self.__extract_argument_position(action, 'defends')
         if all(self.strength_preorder.is_strictly_preceded(def_argument, att_argument) for att_argument in
-                   undefended_attacks):
+               undefended_attacks):
             raise ValueError(f"Unknown Action {action}. Defense is not stronger than attack.")
         state_ = set(state)
         def_argument_pred = from_function_to_predicate(action)

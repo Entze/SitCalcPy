@@ -9,7 +9,6 @@ from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting,
 from scpy.dataclass_config import DataclassConfig
 from scpy.preorder import Preorder
 from scpy.primitives import Function, Literal, Predicate
-from scpy.state.state import State
 
 need_f = Function('need')
 need_p = Predicate('need')
@@ -221,7 +220,8 @@ strength_preorder: Preorder = Preorder.from_tuples(
     ), transitivity=True
 )
 
-#print(strength_preorder)
+
+# print(strength_preorder)
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
