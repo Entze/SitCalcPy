@@ -6,7 +6,7 @@ from frozendict import frozendict
 from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting, consolidate_action
 from scpy.preorder import MutablePreorder, Preorder
 from scpy.situation.situation import Situation
-from test.simple_test_dialectic_causal_setting import MilkCausalSetting, need_l, money_p, buy_p, asks_p, \
+from test.test_dialectic_causal_setting_instances import MilkCausalSetting, need_l, money_p, buy_p, asks_p, \
     need_p, position_need_l, position_need_f, position_compl_need_f, position_compl_need_l, fact_need, \
     supports_fact_need_need, argument_fact_need_need_l, money_l, position_compl_buy_f, position_compl_buy_l, buy_l, \
     necc_p_compl_money_compl_buy, supports_necc_p_compl_money_compl_buy_compl_buy, \
