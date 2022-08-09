@@ -22,7 +22,7 @@ class Preorder:
     def from_tuples(cls, *tuples: Tuple[Function, Function],
                     transitivity: bool = False,
                     symmetry: bool = False,
-                    reflexivity: bool = False):
+                    reflexivity: bool = False) -> _Preorder:
         relation_mapping: MutableMapping[Function, Set[Function]] = {}
         for t in tuples:
             a, b = t

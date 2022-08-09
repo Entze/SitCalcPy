@@ -15,20 +15,6 @@ from scpy.state.state import State
 from scpy.util import from_function_to_predicate
 
 
-def _is_well_formed(literal: Literal, functor: str, *types: Type) -> bool:
-    if literal.predicate.functor != functor:
-        return False
-    types_: Sequence[Type] = tuple(types)
-    if len(types_) < len(literal.predicate.arguments):
-        return False
-    for i, arg in enumerate(literal.predicate.arguments):
-        type_: Type = types_[i]
-        # noinspection PyTypeHints
-        if not isinstance(arg, type_):
-            return False
-    return True
-
-
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class DialecticCausalSetting(CausalSetting):
     fact_set: State = Field(default_factory=frozenset)
@@ -68,14 +54,57 @@ class DialecticCausalSetting(CausalSetting):
         pos = action.arguments[1]
         if not isinstance(arg, Function):
             raise ValueError(
-                f"Unknown Action {action}. Argument must be of type Function, but is type {type(arg).__name__}.")
+                f"Unknown Action {action}. {arg} must be of type Function, but is type {type(arg).__name__}.")
         if not isinstance(pos, Literal):
             raise ValueError(
-                f"Unknown Action {action}. Position must be of type Literal, but is type {type(arg).__name__}.")
+                f"Unknown Action {action}. {pos} must be of type Literal, but is type {type(pos).__name__}.")
         if arg not in self.argument_scheme:
             raise ValueError(f"Unknown Action {action}. Argument not in argument scheme.")
+        if pos.predicate not in self.awareness_set:
+            raise ValueError(f"Unknown Action {action}. Position not in awareness set.")
+        e = arg.arguments[0]
+        if isinstance(e, Literal):
+            if e.predicate not in self.awareness_set:
+                raise ValueError(f"Unknown Action {action}. {e.predicate} not in awareness set.")
+        else:
+            assert isinstance(e, Function)
+            if len(e.arguments) != 2:
+                raise ValueError(f"Unknown Action {action}. {e} should have exactly two arguments.")
+            c = e.arguments[0]
+            if not isinstance(c, Literal):
+                raise ValueError(
+                    f"Unknown Action {action}. {c} must be of type Literal, but is type {type(c).__name__}.")
+            if c.predicate not in self.awareness_set:
+                raise ValueError(
+                    f"Unknown Action {action}. {c.predicate} not in awareness set."
+                )
+            p = e.arguments[1]
+            if not isinstance(p, Literal):
+                raise ValueError(
+                    f"Unknown Action {action}. {p} must be of type Literal, but is type {type(p).__name__}.")
+            if p.predicate not in self.awareness_set:
+                raise ValueError(
+                    f"Unknown Action {action}. {p.predicate} not in awareness set."
+                )
 
         return arg, pos
+
+    def __is_well_formed(self, literal: Literal, functor: str, *types: Type) -> bool:
+        if literal.predicate.functor != functor:
+            return False
+        types_: Sequence[Type] = tuple(types)
+        if len(types_) < len(literal.predicate.arguments):
+            return False
+        for i, arg in enumerate(literal.predicate.arguments):
+            type_: Type = types_[i]
+            # noinspection PyTypeHints
+            if not isinstance(arg, type_):
+                return False
+            if type_ is Literal:
+                assert isinstance(arg, Literal)
+                if arg.predicate not in self.awareness_set:
+                    return False
+        return True
 
     def __do_initial_state(self, action: Action) -> State:
         if action.symbol != 'position':
@@ -136,7 +165,7 @@ class DialecticCausalSetting(CausalSetting):
         attacking = set()
         defending = set()
         for literal in state:
-            if _is_well_formed(literal, 'attacks', Function, Literal):
+            if self.__is_well_formed(literal, 'attacks', Function, Literal):
                 functor = literal.predicate.functor
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
@@ -144,13 +173,13 @@ class DialecticCausalSetting(CausalSetting):
                 lit = Literal(Predicate(functor, (arg, -pos)))
                 attacking.add(lit)
                 att = literal
-            elif _is_well_formed(literal, 'defends', Function, Literal):
+            elif self.__is_well_formed(literal, 'defends', Function, Literal):
                 defending.add(literal)
         changed = True
         while changed:
             changed = False
             for literal in state:
-                if _is_well_formed(literal, 'supports', Function, Literal):
+                if self.__is_well_formed(literal, 'supports', Function, Literal):
                     arg, pos = literal.predicate.arguments
                     assert isinstance(arg, Function)
                     assert isinstance(pos, Literal)
@@ -192,9 +221,9 @@ class DialecticCausalSetting(CausalSetting):
         preds, poses = self.argument_scheme[argument]
         supported = set()
         for literal in state:
-            if _is_well_formed(literal, 'supports', Function, Literal) or \
-                    _is_well_formed(literal, 'argument', Function, Literal) or \
-                    _is_well_formed(literal, 'counterargument', Function, Literal):
+            if self.__is_well_formed(literal, 'supports', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 supported.add(pos)
         return {pred for pred in preds if pred not in supported}
@@ -203,12 +232,12 @@ class DialecticCausalSetting(CausalSetting):
         arguments = set()
         counterarguments = set()
         for literal in state:
-            if _is_well_formed(literal, 'argument', Function, Literal):
+            if self.__is_well_formed(literal, 'argument', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 arguments.add((arg, pos))
-            elif _is_well_formed(literal, 'attacks', Function, Literal):
+            elif self.__is_well_formed(literal, 'attacks', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
@@ -230,14 +259,14 @@ class DialecticCausalSetting(CausalSetting):
         reasoning: MutableMapping[Literal, Function] = {}
         supporting: MutableMapping[Literal, Function] = {}
         for literal in state:
-            if _is_well_formed(literal, functor, Function, Literal):
+            if self.__is_well_formed(literal, functor, Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 reasoning[pos] = arg
-            elif _is_well_formed(literal, 'supports', Function, Literal) or \
-                    _is_well_formed(literal, 'argument', Function, Literal) or \
-                    _is_well_formed(literal, 'counterargument', Function, Literal):
+            elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
+                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
@@ -256,18 +285,18 @@ class DialecticCausalSetting(CausalSetting):
         attacking: MutableMapping[Function, Set[Literal]] = {}
         defending: MutableMapping[Function, Set[Literal]] = {}
         for literal in state:
-            if _is_well_formed(literal, 'attacks', Function, Literal):
+            if self.__is_well_formed(literal, 'attacks', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 attacking.setdefault(arg, set()).add(-pos)
-            elif _is_well_formed(literal, 'supports', Function, Literal):
+            elif self.__is_well_formed(literal, 'supports', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 attacking.setdefault(arg, set()).add(pos)
-            elif _is_well_formed(literal, 'defends', Function, Literal) or \
-                    _is_well_formed(literal, 'argument', Function, Literal):
+            elif self.__is_well_formed(literal, 'defends', Function, Literal) or \
+                    self.__is_well_formed(literal, 'argument', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
@@ -293,11 +322,11 @@ class DialecticCausalSetting(CausalSetting):
         arguments: Set[Function] = set()
 
         for literal in state:
-            if _is_well_formed(literal, 'position', Literal):
+            if self.__is_well_formed(literal, 'position', Literal):
                 pos = literal.predicate.arguments[0]
                 assert isinstance(pos, Literal)
                 positions.add(pos)
-            if _is_well_formed(literal, 'argument', Function, Literal):
+            elif self.__is_well_formed(literal, 'argument', Function, Literal):
                 arg = literal.predicate.arguments[0]
                 assert isinstance(arg, Function)
                 if arg.symbol == 'fact':
@@ -441,8 +470,10 @@ def attacks_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
 def defends_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
     return Literal(Predicate('defends', (arg, pos)), sign)
 
+
 def exo_literal(pos: Literal, sign: bool = True) -> Literal:
     return Literal(Predicate('exo', (pos,)), sign)
+
 
 def position_action(arg: Function, pos: Literal) -> Action:
     return Function('position', (arg, pos))
@@ -466,5 +497,3 @@ def attacks_action(arg: Function, pos: Literal) -> Action:
 
 def defends_action(arg: Function, pos: Literal) -> Action:
     return Function('defends', (arg, pos))
-
-

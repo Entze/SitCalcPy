@@ -143,18 +143,65 @@ o = Literal(o_p)
 t_p = Predicate('t')
 t = Literal(t_p)
 
-# strength_preorder: Preorder = Preorder.from_tuples(
-#     *(
-#         *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
-#         *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
-#         *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
-#         *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
-#         *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
-#         *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
-#     ), transitivity=True
-# )
+strength_preorder: Preorder = Preorder.from_tuples(
+    *(
+        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
+    ), transitivity=True
+)
 
+argument_scheme = {fact(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} | {
+    fact(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} | {hyp(lit): (frozenset(), frozenset({lit}))
+                                                                             for lit in (e, l, o, t)} | {
+                      hyp(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} | {
+                      suff_p(e, l): (frozenset({e}), (frozenset({l}))),
+                      suff_p(t, l): (frozenset({t}), (frozenset({l}))),
+                      necc_p(-o, -l): (frozenset({-o}), (frozenset({-l}))),
+                      necc_p(-e, -l): (frozenset({-e}), (frozenset({-l}))),
+                      suff_e(l, t): (frozenset({l}), (frozenset({t}))),
+                      suff_e(l, e): (frozenset({l}), (frozenset({e}))),
+                      necc_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                      necc_e(-l, -o): (frozenset({-l}), (frozenset({-o}))),
+                      sec_suff_p(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                      sec_suff_p(-l, -t): (frozenset({-l}), (frozenset({-t}))),
+                      sec_necc_p(l, o): (frozenset({l}), (frozenset({o}))),
+                      sec_necc_p(l, e): (frozenset({l}), (frozenset({e}))),
+                      sec_suff_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                      sec_suff_e(-l, -t): (frozenset({-l}), (frozenset({-t}))),
+                  } | {
+                      exo_e(lit): (frozenset({lit}), (frozenset({exo_literal(lit)}))) for lit in (e, l, o, t)
+                  }
+conflict_relation: Preorder = Preorder.from_tuples(
+    *(
+        (suff_e(l, e), suff_e(l, t)),
 
+        (sec_suff_e(-l, -e), necc_e(-l, -e)),
+        (sec_suff_e(-l, -e), necc_e(-l, -o)),
+        (sec_suff_e(-l, -t), necc_e(-l, -e)),
+        (sec_suff_e(-l, -t), necc_e(-l, -o)),
+
+        (necc_e(-l, -e), necc_e(-l, -o)),
+        (necc_e(-l, -e), sec_suff_e(-l, -e)),
+        (necc_e(-l, -e), sec_suff_e(-l, -t)),
+        (necc_e(-l, -o), sec_suff_e(-l, -e)),
+        (necc_e(-l, -o), sec_suff_e(-l, -t)),
+
+        *((exo_e(l), expl) for expl in (
+            fact(l), hyp(l),
+            *(explanation for explanation in argument_scheme.keys()
+              if len(explanation.arguments) == 2 and explanation.arguments[1] == l)
+        )),
+        *((exo_e(-l), expl) for expl in (
+            fact(-l), hyp(-l),
+            *(explanation for explanation in argument_scheme.keys()
+              if len(explanation.arguments) == 2 and explanation.arguments[1] == -l)
+        )),
+    )
+)
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
@@ -162,27 +209,6 @@ class Library(DialecticCausalSetting):
     fact_set: State = Field(default_factory=frozenset)
     awareness_set: FrozenSet[Predicate] = Field(default_factory=frozenset)
     argument_scheme: Mapping[Function, Tuple[FrozenSet[Literal], FrozenSet[Literal]]] = Field(
-        default=frozendict({fact(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} |
-                           {fact(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} |
-                           {hyp(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} |
-                           {hyp(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} | {
-                               suff_p(e, l): (frozenset({e}), (frozenset({l}))),
-                               suff_p(t, l): (frozenset({t}), (frozenset({l}))),
-                               necc_p(-o, -l): (frozenset({-o}), (frozenset({-l}))),
-                               necc_p(-e, -l): (frozenset({-e}), (frozenset({-l}))),
-                               suff_e(l, t): (frozenset({l}), (frozenset({t}))),
-                               suff_e(l, e): (frozenset({l}), (frozenset({e}))),
-                               necc_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
-                               necc_e(-l, -o): (frozenset({-l}), (frozenset({-o}))),
-                               sec_suff_p(-l, -e): (frozenset({-l}), (frozenset({-e}))),
-                               sec_suff_p(-l, -t): (frozenset({-l}), (frozenset({-t}))),
-                               sec_necc_p(l, o): (frozenset({l}), (frozenset({o}))),
-                               sec_necc_p(l, e): (frozenset({l}), (frozenset({e}))),
-                               sec_suff_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
-                               sec_suff_e(-l, -t): (frozenset({-l}), (frozenset({-t}))),
-                           } | {
-                               exo_e(lit): (frozenset({lit}), (frozenset({exo_literal(lit)}))) for lit in (e, l, o, t)
-                           }
-                           ))
-    conflict_relation: Preorder = Field(default_factory=Preorder)
-    strength_preorder: Preorder = Field(default_factory=Preorder)
+        default=frozendict(argument_scheme))
+    conflict_relation: Preorder = Field(default=conflict_relation)
+    strength_preorder: Preorder = Field(default=strength_preorder)
