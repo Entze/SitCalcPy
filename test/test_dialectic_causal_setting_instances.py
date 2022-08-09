@@ -1,8 +1,16 @@
+from typing import FrozenSet, Mapping, Tuple
+
+from frozendict import frozendict
+from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting
+from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting, fact, hyp, suff_p, necc_p, suff_e, \
+    necc_e, sec_suff_p, sec_necc_p, sec_suff_e, exo_e, exo_literal
 from scpy.dataclass_config import DataclassConfig
+from scpy.preorder import Preorder
 from scpy.primitives import Function, Literal, Predicate
+from scpy.relation import Relation
+from scpy.state.state import State
 
 need_f = Function('need')
 need_p = Predicate('need')
@@ -125,3 +133,57 @@ argument_hyp_money_money_l = Literal(argument_hyp_money_money_p)
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
     pass
+
+
+e_p = Predicate('e')
+e = Literal(e_p)
+l_p = Predicate('l')
+l = Literal(l_p)
+o_p = Predicate('o')
+o = Literal(o_p)
+t_p = Predicate('t')
+t = Literal(t_p)
+
+strength_preorder: Preorder = Preorder.from_tuples(
+    *(
+        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
+    ), transitivity=True
+)
+
+
+
+
+@dataclass(frozen=True, order=True, config=DataclassConfig)
+class Library(DialecticCausalSetting):
+    fact_set: State = Field(default_factory=frozenset)
+    awareness_set: FrozenSet[Predicate] = Field(default_factory=frozenset)
+    argument_scheme: Mapping[Function, Tuple[FrozenSet[Literal], FrozenSet[Literal]]] = Field(
+        default=frozendict({fact(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} |
+                           {fact(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} |
+                           {hyp(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} |
+                           {hyp(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} | {
+                               suff_p(e, l): (frozenset({e}), (frozenset({l}))),
+                               suff_p(t, l): (frozenset({t}), (frozenset({l}))),
+                               necc_p(-o, -l): (frozenset({-o}), (frozenset({-l}))),
+                               necc_p(-e, -l): (frozenset({-e}), (frozenset({-l}))),
+                               suff_e(l, t): (frozenset({l}), (frozenset({t}))),
+                               suff_e(l, e): (frozenset({l}), (frozenset({e}))),
+                               necc_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                               necc_e(-l, -o): (frozenset({-l}), (frozenset({-o}))),
+                               sec_suff_p(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                               sec_suff_p(-l, -t): (frozenset({-l}), (frozenset({-t}))),
+                               sec_necc_p(l, o): (frozenset({l}), (frozenset({o}))),
+                               sec_necc_p(l, e): (frozenset({l}), (frozenset({e}))),
+                               sec_suff_e(-l, -e): (frozenset({-l}), (frozenset({-e}))),
+                               sec_suff_e(-l, -t): (frozenset({-l}), (frozenset({-t}))),
+                           } | {
+                               exo_e(lit): (frozenset({lit}), (frozenset({exo_literal(lit)}))) for lit in (e, l, o, t)
+                           }
+                           ))
+    conflict_relation: Relation = Field(default_factory=Relation)
+    strength_preorder: Preorder = Field(default_factory=Preorder)

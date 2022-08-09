@@ -419,29 +419,31 @@ def exo_e(pos: Literal) -> Function:
     return Function('exo_e', (Function('cond_for', (pos, Function('exo', (pos,)))),))
 
 
-def position_literal(pos: Literal) -> Literal:
-    return Literal(Predicate('position', (pos,)))
+def position_literal(pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('position', (pos,)), sign)
 
 
-def argument_literal(arg: Function, pos: Literal) -> Literal:
-    return Literal(Predicate('argument', (arg, pos)))
+def argument_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('argument', (arg, pos)), sign)
 
 
-def counterargument_literal(arg: Function, pos: Literal) -> Literal:
-    return Literal(Predicate('counterargument', (arg, pos)))
+def counterargument_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('counterargument', (arg, pos)), sign)
 
 
-def supports_literal(arg: Function, pos: Literal) -> Literal:
-    return Literal(Predicate('supports', (arg, pos)))
+def supports_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('supports', (arg, pos)), sign)
 
 
-def attacks_literal(arg: Function, pos: Literal) -> Literal:
-    return Literal(Predicate('attacks', (arg, pos)))
+def attacks_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('attacks', (arg, pos)), sign)
 
 
-def defends_literal(arg: Function, pos: Literal) -> Literal:
-    return Literal(Predicate('defends', (arg, pos)))
+def defends_literal(arg: Function, pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('defends', (arg, pos)), sign)
 
+def exo_literal(pos: Literal, sign: bool = True) -> Literal:
+    return Literal(Predicate('exo', (pos,)), sign)
 
 def position_action(arg: Function, pos: Literal) -> Action:
     return Function('position', (arg, pos))
@@ -465,3 +467,5 @@ def attacks_action(arg: Function, pos: Literal) -> Action:
 
 def defends_action(arg: Function, pos: Literal) -> Action:
     return Function('defends', (arg, pos))
+
+

@@ -1,4 +1,4 @@
-from typing import Optional, TypeAlias, Mapping, Collection, MutableMapping, Set, Iterable, Any
+from typing import Optional, TypeAlias, Mapping, Collection, MutableMapping, Set, Iterable, Any, Tuple, Union
 
 from frozendict import frozendict  # type: ignore
 
@@ -9,11 +9,23 @@ _Relation: TypeAlias = 'Relation'
 
 class Relation:
 
-    def __init__(self, relation: Optional[_Relation] = None):
+    def __init__(self, relation: Union[_Relation, Mapping[Function, Collection[Function]], None] = None):
         if relation is None:
             self._relation: Mapping[Function, Collection[Function]] = frozendict()
+        elif isinstance(relation, Relation):
+            self._relation = frozendict({key: frozenset(value) for key, value in relation._relation.items()})
         else:
-            self._relation = frozendict({key: frozenset(value) for key, value in self._relation.items()})
+            assert isinstance(relation, Mapping)
+            self._relation = frozendict({key: frozenset(value) for key, value in relation.items()})
+
+    @classmethod
+    def from_tuples(cls, *tuples: Tuple[Function, Function]):
+        relation_mapping: MutableMapping[Function, Set[Function]] = {}
+        for t in tuples:
+            relation_mapping.setdefault(t[0], set()).add(t[1])
+        relation = cls.__new__(cls)
+        super(Relation, relation).__init__(relation_mapping)
+        return relation
 
     def __hash__(self) -> int:
         return hash(('Relation', self._relation))

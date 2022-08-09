@@ -1,4 +1,4 @@
-from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping
+from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union
 
 from frozendict import frozendict  # type: ignore
 
@@ -9,11 +9,50 @@ _Preorder: TypeAlias = 'Preorder'
 
 class Preorder:
 
-    def __init__(self, tp: Optional[_Preorder] = None):
-        if tp is None:
+    def __init__(self, __object: Union[_Preorder, Mapping[Function, Collection[Function]], None] = None):
+        if __object is None:
             self._relation: Mapping[Function, Collection[Function]] = frozendict()
+        elif isinstance(__object, Preorder):
+            self._relation = frozendict({key: frozenset(value) for key, value in __object._relation.items()})
         else:
-            self._relation = frozendict({key: frozenset(value) for key, value in tp._relation.items()})
+            assert isinstance(__object, Mapping)
+            self._relation = frozendict({key: frozenset(value) for key, value in __object.items()})
+
+    @classmethod
+    def from_tuples(cls, *tuples: Tuple[Function, Function],
+                    transitivity: bool = False,
+                    symmetry: bool = False,
+                    reflexivity: bool = False):
+        relation_mapping: MutableMapping[Function, Set[Function]] = {}
+        for t in tuples:
+            a, b = t
+            relation_mapping.setdefault(a, set()).add(b)
+            if symmetry:
+                relation_mapping.setdefault(b, set()).add(a)
+            if reflexivity:
+                assert a in relation_mapping
+                relation_mapping[a].add(a)
+                relation_mapping.setdefault(b, set()).add(b)
+
+        if transitivity:
+            changed = True
+            while changed:
+                changed = False
+                for a, bs in relation_mapping.items():
+                    add_to_a: Set[Function] = set()
+                    for b in bs:
+                        for c in relation_mapping.get(b, ()):
+                            add_to_a.add(c)
+                    if add_to_a:
+                        changed = True
+                    assert a in relation_mapping
+                    relation_mapping[a].update(add_to_a)
+                    if symmetry:
+                        for c in add_to_a:
+                            relation_mapping.setdefault(c, set()).add(a)
+        relation = cls.__new__(cls)
+        super(Preorder, relation).__init__(relation_mapping)
+        return relation
 
     def __hash__(self) -> int:
         return hash(('Preorder', self._relation))
