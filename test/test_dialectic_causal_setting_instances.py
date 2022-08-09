@@ -143,17 +143,6 @@ o = Literal(o_p)
 t_p = Predicate('t')
 t = Literal(t_p)
 
-strength_preorder: Preorder = Preorder.from_tuples(
-    *(
-        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
-        *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
-        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
-        *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
-        *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
-        *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
-    ), transitivity=True
-)
-
 argument_scheme = {fact(lit): (frozenset(), frozenset({lit})) for lit in (e, l, o, t)} | {
     fact(-lit): (frozenset(), frozenset({-lit})) for lit in (e, l, o, t)} | {hyp(lit): (frozenset(), frozenset({lit}))
                                                                              for lit in (e, l, o, t)} | {
@@ -175,8 +164,22 @@ argument_scheme = {fact(lit): (frozenset(), frozenset({lit})) for lit in (e, l, 
                   } | {
                       exo_e(lit): (frozenset({lit}), (frozenset({exo_literal(lit)}))) for lit in (e, l, o, t)
                   }
+
+argument_for = {}
+for arg in argument_scheme:
+    if isinstance(arg.arguments[0], Function):
+        argument_for[arg.arguments[0].arguments[1]] = arg
+
 conflict_relation: Preorder = Preorder.from_tuples(
     *(
+        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
+        *((arg1, arg2) for arg1 in argument_scheme for arg2 in argument_scheme if
+          isinstance(arg1.arguments[0], Function) and len(arg1.arguments[0].arguments) > 1 and
+          isinstance(arg2.arguments[0], Function) and len(arg2.arguments[0].arguments) > 1 and
+          isinstance(arg1.arguments[0].arguments[1], Literal) and isinstance(arg2.arguments[0].arguments[1],
+                                                                             Literal) and
+          -(arg1.arguments[0].arguments[1]) == arg2.arguments[0].arguments[1]),
         (suff_e(l, e), suff_e(l, t)),
 
         (sec_suff_e(-l, -e), necc_e(-l, -e)),
@@ -200,15 +203,45 @@ conflict_relation: Preorder = Preorder.from_tuples(
             *(explanation for explanation in argument_scheme.keys()
               if len(explanation.arguments) == 2 and explanation.arguments[1] == -l)
         )),
-    )
+    ), symmetry=True
 )
+
+strength_preorder: Preorder = Preorder.from_tuples(
+    *(
+        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
+        *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
+        *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
+        *((arg1, arg2) for arg1 in argument_scheme for arg2 in argument_scheme
+          if conflict_relation.is_similar(arg1, arg2) and
+          arg1.symbol == 'suff_p' and arg2.symbol == 'necc_p'
+          )
+    ), transitivity=True
+)
+
+#print(strength_preorder)
 
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class Library(DialecticCausalSetting):
-    fact_set: State = Field(default_factory=frozenset)
-    awareness_set: FrozenSet[Predicate] = Field(default_factory=frozenset)
     argument_scheme: Mapping[Function, Tuple[FrozenSet[Literal], FrozenSet[Literal]]] = Field(
         default=frozendict(argument_scheme))
     conflict_relation: Preorder = Field(default=conflict_relation)
     strength_preorder: Preorder = Field(default=strength_preorder)
+
+
+@dataclass(frozen=True, order=True, config=DataclassConfig)
+class GroupI(Library):
+    awareness_set: FrozenSet[Predicate] = Field(default=frozenset({e_p, l_p}))
+
+
+@dataclass(frozen=True, order=True, config=DataclassConfig)
+class GroupII(Library):
+    awareness_set: FrozenSet[Predicate] = Field(default=frozenset({e_p, l_p, t_p}))
+
+
+@dataclass(frozen=True, order=True, config=DataclassConfig)
+class GroupIII(Library):
+    awareness_set: FrozenSet[Predicate] = Field(default=frozenset({e_p, l_p, o_p}))

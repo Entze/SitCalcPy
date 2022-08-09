@@ -71,7 +71,14 @@ class Preorder:
         return f"{'{'}{', '.join(elems)}{'}'}"
 
     def __getitem__(self, item: Any) -> Iterator[Function]:
+        if isinstance(item, Function):
+            yield from self.get(item)
+
+    def get(self, item: Function) -> Iterator[Function]:
         yield from self._relation.get(item, ())
+
+    def get_inv(self, item: Function) -> Iterator[Function]:
+        return (elem for elem, relates in self._relation if item in relates)
 
     def is_preceded(self, left: Function, right: Function) -> bool:
         return right in self._relation.get(left, ())

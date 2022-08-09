@@ -300,7 +300,7 @@ class TestDo(unittest.TestCase):
                               argument_scheme=argument_scheme)
 
         s2 = Situation(frozenset({position_need_l, argument_fact_need_need_l}))
-        s3 = t.do(consolidate_action(), s2)
+        s3 = t.do(consolidate_action, s2)
 
         expected = {position_need_l, argument_fact_need_need_l}
         actual = set(s3.state)
@@ -319,7 +319,7 @@ class TestDo(unittest.TestCase):
             attacks_suff_p_need_buy_compl_buy_l,
             supports_fact_need_need_l,
         }))
-        s6 = t.do(consolidate_action(), s5)
+        s6 = t.do(consolidate_action, s5)
 
         expected = {
             position_compl_buy_l,
@@ -343,7 +343,7 @@ class TestDo(unittest.TestCase):
                                   attacks_necc_p_compl_money_compl_buy_buy_l,
                                   supports_hyp_compl_money_compl_money_l,
                                   defends_hyp_money_money_l}))
-        s7 = t.do(consolidate_action(), s6)
+        s7 = t.do(consolidate_action, s6)
 
         expected = {position_buy_l,
                     argument_suff_p_need_buy_buy_l,
@@ -497,6 +497,7 @@ class TestUndefendedAttacks(unittest.TestCase):
             attacks_hyp_buy_compl_buy_l}))
 
         expected = {
+            hyp_buy: {buy_l}
         }
         actual = t.undefended_attacks(s4.state)
 
@@ -515,6 +516,8 @@ class TestUndefendedAttacks(unittest.TestCase):
         }))
 
         expected = {
+            suff_p_need_buy: {buy_l},
+            fact_need: {need_l}
         }
         actual = t.undefended_attacks(s5.state)
 

@@ -149,7 +149,7 @@ class DialecticCausalSetting(CausalSetting):
     def __do_defense(self, action: Action, state: State,
                      undefended_attacks: Mapping[Function, Collection[Literal]]) -> State:
         def_argument, def_position = self.__extract_argument_position(action, 'defends')
-        if not any(self.strength_preorder.is_preceded(att_argument, def_argument) for att_argument in
+        if all(self.strength_preorder.is_strictly_preceded(def_argument, att_argument) for att_argument in
                    undefended_attacks):
             raise ValueError(f"Unknown Action {action}. Defense is not stronger than attack.")
         state_ = set(state)
@@ -183,21 +183,17 @@ class DialecticCausalSetting(CausalSetting):
                     arg, pos = literal.predicate.arguments
                     assert isinstance(arg, Function)
                     assert isinstance(pos, Literal)
-                    if literal not in attacking:
-                        coll = attacking
-                    elif literal not in defending:
-                        coll = defending
-                    else:
-                        continue
-
-                    for elem in coll:
-                        arg, _ = elem.predicate.arguments
-                        assert isinstance(arg, Function)
-                        preds, _ = self.argument_scheme[arg]
-                        if pos in preds:
-                            changed = True
-                            coll.add(literal)
-                            break
+                    for coll in (attacking, defending):
+                        if literal in coll:
+                            continue
+                        for elem in coll:
+                            arg, _ = elem.predicate.arguments
+                            assert isinstance(arg, Function)
+                            preds, _ = self.argument_scheme[arg]
+                            if pos in preds:
+                                changed = True
+                                coll.add(literal)
+                                break
 
         state_ = set(state)
         for attack in attacking:
@@ -221,9 +217,7 @@ class DialecticCausalSetting(CausalSetting):
         preds, poses = self.argument_scheme[argument]
         supported = set()
         for literal in state:
-            if self.__is_well_formed(literal, 'supports', Function, Literal) or \
-                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
-                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+            if self.__is_well_formed(literal, 'supports', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 supported.add(pos)
         return {pred for pred in preds if pred not in supported}
@@ -264,9 +258,7 @@ class DialecticCausalSetting(CausalSetting):
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 reasoning[pos] = arg
-            elif self.__is_well_formed(literal, 'supports', Function, Literal) or \
-                    self.__is_well_formed(literal, 'argument', Function, Literal) or \
-                    self.__is_well_formed(literal, 'counterargument', Function, Literal):
+            elif self.__is_well_formed(literal, 'supports', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
@@ -295,23 +287,25 @@ class DialecticCausalSetting(CausalSetting):
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 attacking.setdefault(arg, set()).add(pos)
-            elif self.__is_well_formed(literal, 'defends', Function, Literal) or \
-                    self.__is_well_formed(literal, 'argument', Function, Literal):
+            elif self.__is_well_formed(literal, 'defends', Function, Literal):
                 arg, pos = literal.predicate.arguments
                 assert isinstance(arg, Function)
                 assert isinstance(pos, Literal)
                 defending.setdefault(arg, set()).add(pos)
 
-        defense_needed = False
         defended = False
+        strong_defense_needed = False
+        strong_defended = False
         for att_argument, att_positions in attacking.items():
             for def_argument, def_positions in defending.items():
                 if self.strength_preorder.is_strictly_preceded(def_argument, att_argument):
-                    defense_needed = True
+                    strong_defense_needed = True
                 if self.strength_preorder.is_strictly_preceded(att_argument, def_argument):
+                    strong_defended = True
+                if any(-att_position in def_positions for att_position in att_positions):
                     defended = True
 
-        if defense_needed and not defended:
+        if not defended or strong_defense_needed and not strong_defended:
             return attacking
         return {}
 
@@ -384,7 +378,19 @@ class DialecticCausalSetting(CausalSetting):
             return self.__do_reasoning(action, state, incomplete, 'supports')
         undefended_attacks = self.undefended_attacks(state)
         if undefended_attacks:
-            return self.__do_defense(action, state, undefended_attacks)
+            for attack, att_posses in undefended_attacks.items():
+                for possible_defence in self.strength_preorder[attack]:
+                    if not self.conflict_relation.is_similar(attack, possible_defence):
+                        if possible_defence not in self.argument_scheme:
+                            continue
+                        if not any(-att_pos in self.argument_scheme[possible_defence][1] for att_pos in att_posses):
+                            continue
+                    if possible_defence.symbol == 'fact':
+                        f = possible_defence.arguments[0]
+                        assert isinstance(f, Literal)
+                        if f not in self.fact_set:
+                            continue
+                    return self.__do_defense(action, state, undefended_attacks)
         if is_consolidate(action):
             return self.__do_consolidate(state)
         att = self.attacks(state)
@@ -403,8 +409,7 @@ def is_consolidate(action: Action) -> bool:
     return action.symbol == 'consolidate' and not action.arguments
 
 
-def consolidate_action() -> Action:
-    return Function('consolidate')
+consolidate_action: Action = Function('consolidate')
 
 
 def fact(lit: Literal) -> Function:
