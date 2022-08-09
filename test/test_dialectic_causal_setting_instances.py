@@ -9,7 +9,6 @@ from scpy.causal_setting.dialectic_causal_setting import DialecticCausalSetting,
 from scpy.dataclass_config import DataclassConfig
 from scpy.preorder import Preorder
 from scpy.primitives import Function, Literal, Predicate
-from scpy.relation import Relation
 from scpy.state.state import State
 
 need_f = Function('need')
@@ -144,16 +143,16 @@ o = Literal(o_p)
 t_p = Predicate('t')
 t = Literal(t_p)
 
-strength_preorder: Preorder = Preorder.from_tuples(
-    *(
-        *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
-        *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
-        *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
-        *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
-        *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
-        *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
-    ), transitivity=True
-)
+# strength_preorder: Preorder = Preorder.from_tuples(
+#     *(
+#         *((fact(lit), fact(-lit)) for lit in (e, l, o, t)),
+#         *((fact(-lit), fact(lit)) for lit in (e, l, o, t)),
+#         *((hyp(lit), hyp(-lit)) for lit in (e, l, o, t)),
+#         *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
+#         *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
+#         *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
+#     ), transitivity=True
+# )
 
 
 
@@ -185,5 +184,5 @@ class Library(DialecticCausalSetting):
                                exo_e(lit): (frozenset({lit}), (frozenset({exo_literal(lit)}))) for lit in (e, l, o, t)
                            }
                            ))
-    conflict_relation: Relation = Field(default_factory=Relation)
+    conflict_relation: Preorder = Field(default_factory=Preorder)
     strength_preorder: Preorder = Field(default_factory=Preorder)

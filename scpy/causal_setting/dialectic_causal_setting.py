@@ -10,7 +10,6 @@ from scpy.causal_setting.causal_setting import CausalSetting
 from scpy.dataclass_config import DataclassConfig
 from scpy.preorder import Preorder
 from scpy.primitives import Function, Literal, Predicate
-from scpy.relation import Relation
 from scpy.situation.situation import Situation
 from scpy.state.state import State
 from scpy.util import from_function_to_predicate
@@ -36,7 +35,7 @@ class DialecticCausalSetting(CausalSetting):
     awareness_set: FrozenSet[Predicate] = Field(default_factory=frozenset)
     argument_scheme: Mapping[Function, Tuple[FrozenSet[Literal], FrozenSet[Literal]]] = Field(
         default_factory=frozendict)
-    conflict_relation: Relation = Field(default_factory=Relation)
+    conflict_relation: Preorder = Field(default_factory=Preorder)
     strength_preorder: Preorder = Field(default_factory=Preorder)
     fluents: FrozenSet[Predicate] = Field(init=False, repr=False, default_factory=frozenset)
     actions: FrozenSet[Action] = Field(init=False, repr=False, default_factory=frozenset)

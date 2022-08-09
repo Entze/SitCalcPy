@@ -1,4 +1,4 @@
-from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union
+from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union, Any, Iterator
 
 from frozendict import frozendict  # type: ignore
 
@@ -43,15 +43,17 @@ class Preorder:
                     for b in bs:
                         for c in relation_mapping.get(b, ()):
                             add_to_a.add(c)
-                    if add_to_a:
-                        changed = True
                     assert a in relation_mapping
                     relation_mapping[a].update(add_to_a)
                     if symmetry:
                         for c in add_to_a:
-                            relation_mapping.setdefault(c, set()).add(a)
+                            if c not in add_to_a:
+                                relation_mapping.setdefault(c, set()).add(a)
+                                changed = True
+
         relation = cls.__new__(cls)
-        super(Preorder, relation).__init__(relation_mapping)
+        super(Preorder, relation).__init__()
+        relation._relation = relation_mapping
         return relation
 
     def __hash__(self) -> int:
@@ -67,6 +69,9 @@ class Preorder:
                  *(f'{key} ≺ {value}' for (key, value) in strictly),
                  *(f'{key} ~ {value}' for (key, value) in similar if (key, value) <= (value, key)))
         return f"{'{'}{', '.join(elems)}{'}'}"
+
+    def __getitem__(self, item: Any) -> Iterator[Function]:
+        yield from self._relation.get(item, ())
 
     def is_preceded(self, left: Function, right: Function) -> bool:
         return right in self._relation.get(left, ())
