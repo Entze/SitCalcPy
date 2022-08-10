@@ -79,13 +79,15 @@ class DialecticCausalSetting(CausalSetting):
                     f"Unknown Action {action}. {c.predicate} not in awareness set."
                 )
             p = e.arguments[1]
-            if not isinstance(p, Literal):
-                raise ValueError(
-                    f"Unknown Action {action}. {p} must be of type Literal, but is type {type(p).__name__}.")
-            if p.predicate not in self.awareness_set:
-                raise ValueError(
-                    f"Unknown Action {action}. {p.predicate} not in awareness set."
-                )
+            if isinstance(p, Literal):
+                if p.predicate not in self.awareness_set:
+                    raise ValueError(
+                        f"Unknown Action {action}. {p.predicate} not in awareness set."
+                    )
+            elif isinstance(p, Function):
+                if p.symbol != 'exo':
+                    raise ValueError(
+                        f"Unknown Action {action}. {p} must have the symbol exo.")
 
         return arg, pos
 
@@ -379,7 +381,15 @@ class DialecticCausalSetting(CausalSetting):
         undefended_attacks = self.undefended_attacks(state)
         if undefended_attacks:
             for attack, att_posses in undefended_attacks.items():
-                for possible_defence in self.strength_preorder[attack]:
+                if attack.symbol == 'exo_e':
+                    if any(self.__is_well_formed(literal, 'defends', Function, Literal) for literal in state):
+                        continue
+
+                for possible_defence in self.argument_scheme:
+                    if attack.symbol == 'fact' and possible_defence.symbol != 'fact':
+                        continue
+                    if self.strength_preorder.is_strictly_preceded(possible_defence, attack):
+                        continue
                     if not self.conflict_relation.is_similar(attack, possible_defence):
                         if possible_defence not in self.argument_scheme:
                             continue
@@ -389,6 +399,9 @@ class DialecticCausalSetting(CausalSetting):
                         f = possible_defence.arguments[0]
                         assert isinstance(f, Literal)
                         if f not in self.fact_set:
+                            continue
+                    if possible_defence.symbol == 'hyp':
+                        if not self.strength_preorder.is_preceded(attack, possible_defence):
                             continue
                     return self.__do_defense(action, state, undefended_attacks)
         if is_consolidate(action):

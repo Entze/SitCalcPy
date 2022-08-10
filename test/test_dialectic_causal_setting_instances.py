@@ -127,6 +127,8 @@ argument_hyp_money_money_f = Function('argument', (hyp_money, money_l))
 argument_hyp_money_money_p = Predicate('argument', (hyp_money, money_l))
 argument_hyp_money_money_l = Literal(argument_hyp_money_money_p)
 
+fact_compl_need = Function('fact', (-need_l,))
+
 
 @dataclass(frozen=True, order=True, config=DataclassConfig)
 class MilkCausalSetting(DialecticCausalSetting):
@@ -213,6 +215,10 @@ strength_preorder: Preorder = Preorder.from_tuples(
         *((hyp(-lit), hyp(lit)) for lit in (e, l, o, t)),
         *((hyp(lit), fact(-lit)) for lit in (e, l, o, t)),
         *((hyp(-lit), fact(lit)) for lit in (e, l, o, t)),
+        *((arg, fact(-arg.arguments[0].arguments[1])) for arg in argument_scheme if isinstance(arg.arguments[0], Function) and
+          len(arg.arguments[0].arguments) > 1 and
+            isinstance(arg.arguments[0].arguments[1], Literal)
+          ),
         *((arg1, arg2) for arg1 in argument_scheme for arg2 in argument_scheme
           if conflict_relation.is_similar(arg1, arg2) and
           arg1.symbol == 'suff_p' and arg2.symbol == 'necc_p'

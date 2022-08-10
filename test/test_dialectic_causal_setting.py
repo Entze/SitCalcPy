@@ -20,7 +20,7 @@ from test.test_dialectic_causal_setting_instances import MilkCausalSetting, need
     defends_hyp_money_money_l, hyp_money, hyp_compl_money, supports_hyp_compl_money_compl_money_l, \
     supports_hyp_compl_money_compl_money_f, counterargument_suff_p_need_buy_buy_l, counterargument_fact_need_need_l, \
     counterargument_necc_p_compl_money_compl_buy_compl_buy_l, counterargument_hyp_compl_money_compl_money_l, \
-    argument_hyp_money_money_l
+    argument_hyp_money_money_l, fact_compl_need
 
 fact_set = frozenset({need_l, -money_l})
 awareness_set = frozenset({need_p, asks_p, buy_p, money_p})
@@ -47,6 +47,7 @@ strength_preorder_.precedes(hyp_buy, hyp_money)
 strength_preorder_.precedes(hyp_money, hyp_buy)
 strength_preorder_.precedes(hyp_money, hyp_compl_money)
 strength_preorder_.precedes(hyp_compl_money, hyp_money)
+strength_preorder_.precedes(hyp_need, fact_compl_need)
 strength_preorder = Preorder(strength_preorder_)
 s0 = Situation(frozenset())
 
@@ -307,31 +308,6 @@ class TestDo(unittest.TestCase):
 
         self.assertSetEqual(expected, actual)
 
-    def test_milk_consolidate(self):
-        t = MilkCausalSetting(fact_set=fact_set,
-                              awareness_set=awareness_set,
-                              argument_scheme=argument_scheme)
-
-        s5 = Situation(frozenset({
-            position_compl_buy_l,
-            argument_necc_p_compl_money_compl_buy_compl_buy_l,
-            argument_fact_compl_money_l,
-            attacks_suff_p_need_buy_compl_buy_l,
-            supports_fact_need_need_l,
-        }))
-        s6 = t.do(consolidate_action, s5)
-
-        expected = {
-            position_compl_buy_l,
-            argument_necc_p_compl_money_compl_buy_compl_buy_l,
-            argument_fact_compl_money_l,
-            counterargument_suff_p_need_buy_buy_l,
-            counterargument_fact_need_need_l,
-        }
-
-        actual = set(s6.state)
-
-        self.assertSetEqual(expected, actual)
 
     def test_milk_alt_consolidate(self):
         t = MilkCausalSetting(fact_set=fact_set,

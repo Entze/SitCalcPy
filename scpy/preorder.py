@@ -1,4 +1,4 @@
-from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union, Any, Iterator
+from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union, Any, Iterator, Generator
 
 from frozendict import frozendict  # type: ignore
 
@@ -78,7 +78,7 @@ class Preorder:
         yield from self._relation.get(item, ())
 
     def get_inv(self, item: Function) -> Iterator[Function]:
-        return (elem for elem, relates in self._relation if item in relates)
+        yield from (elem for elem, relates in self._relation.items() if item in relates)
 
     def is_preceded(self, left: Function, right: Function) -> bool:
         return right in self._relation.get(left, ())
