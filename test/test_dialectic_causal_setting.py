@@ -18,8 +18,8 @@ from test.test_dialectic_causal_setting_instances import MilkCausalSetting, need
     argument_suff_p_need_buy_buy_l, attacks_necc_p_compl_money_comply_buy_buy_f, \
     attacks_necc_p_compl_money_compl_buy_buy_l, supports_fact_compl_money_compl_money_l, defends_hyp_money_money_f, \
     defends_hyp_money_money_l, hyp_money, hyp_compl_money, supports_hyp_compl_money_compl_money_l, \
-    supports_hyp_compl_money_compl_money_f, counterargument_suff_p_need_buy_buy_l, counterargument_fact_need_need_l, \
-    counterargument_necc_p_compl_money_compl_buy_compl_buy_l, counterargument_hyp_compl_money_compl_money_l, \
+    supports_hyp_compl_money_compl_money_f, counterargument_necc_p_compl_money_compl_buy_compl_buy_l, \
+    counterargument_hyp_compl_money_compl_money_l, \
     argument_hyp_money_money_l, fact_compl_need
 
 fact_set = frozenset({need_l, -money_l})
@@ -307,7 +307,6 @@ class TestDo(unittest.TestCase):
         actual = set(s3.state)
 
         self.assertSetEqual(expected, actual)
-
 
     def test_milk_alt_consolidate(self):
         t = MilkCausalSetting(fact_set=fact_set,

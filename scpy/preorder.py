@@ -1,4 +1,4 @@
-from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union, Any, Iterator, Generator
+from typing import TypeAlias, Optional, Mapping, Collection, Set, MutableMapping, Tuple, Union, Any, Iterator
 
 from frozendict import frozendict  # type: ignore
 
